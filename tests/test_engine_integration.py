@@ -187,9 +187,14 @@ def test_save_command_persists_progress_mid_run(maze_module, repo, puzzle_regist
 
     engine = engine_cls(maze=maze, repo=repo, puzzles=puzzle_registry, player_id=player_id, game_id=game_id)
 
-    # Make at least one move
+    # Make at least one move; if first edge is gated, solve and retry.
     d = _bfs_path_to_exit(maze)[0]
-    engine.handle(cmd_cls(verb="go", args=[_dir_token(d)]))
+    out = engine.handle(cmd_cls(verb="go", args=[_dir_token(d)]))
+    view = out["view"] if isinstance(out, dict) else out.view
+    pending = view["pending_puzzle"] if isinstance(view, dict) else view.pending_puzzle
+    if pending is not None:
+        engine.handle(cmd_cls(verb="answer", args=["solve"]))
+        engine.handle(cmd_cls(verb="go", args=[_dir_token(d)]))
     engine.handle(cmd_cls(verb="save", args=[]))
 
     saved = repo.get_game(game_id)
