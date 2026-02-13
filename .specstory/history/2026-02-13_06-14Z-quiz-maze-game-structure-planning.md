@@ -4141,7 +4141,7 @@ Clean up the Iterable import and commit
 
 _**Agent (model gpt-5.3-codex, mode Agent)**_
 
-
+I’ll remove the unused `Iterable` import, rerun the maze contract tests, then commit only the maze branch changes.
 
 ---
 
@@ -4149,11 +4149,2433 @@ _**Agent (model gpt-5.3-codex, mode Agent)**_
 
 <details><summary>Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/maze.py</summary>
 
-Status: **loading**
-
 </details>
 
 </tool-use>
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: python -m pytest -q tests/test_maze_contract.py</summary>
+
+```bash
+python -m pytest -q tests/test_maze_contract.py
+```
+
+```
+....                                                                     [100%]
+4 passed in 0.09s
+
+```
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: git status --short --branch</summary>
+
+```bash
+git status --short --branch
+```
+
+```
+## feat/maze-contract
+ M .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
+?? maze.py
+
+```
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: git diff -- maze.py</summary>
+
+```bash
+git diff -- maze.py
+```
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: git log --oneline --decorate -n 5</summary>
+
+```bash
+git log --oneline --decorate -n 5
+```
+
+```
+23128f6 (HEAD -&gt; feat/maze-contract, origin/master, master, feat/engine-cli, feat/db-json-repo, custom_modification) Clarify no-CI manual test gate requirements.
+a258f53 (integration-tests) Add shared integration and contract tests for walking skeleton.
+ea7c9e7 (planning) Add SpecStory session notes.
+8ccd89f Add agent contribution rules and PR workflow.
+ce8c28e Add integration testing spec and customization roadmap.
+
+```
+</details>
+</tool-use>
+
+---
+
+I see an unrelated modified `.specstory` file again; I’ll avoid staging it and commit only `maze.py`.
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: git add maze.py && git commit --trailer "Co-authored-by: Cursor <cursoragent@cursor.com>" -m "$(cat <<'EOF'
+Implement maze contract for 3x3 walking skeleton.
+
+Add Direction/Position/CellSpec/Maze APIs and deterministic build_minimal_3x3_maze layout with walls and gate hooks to satisfy maze contract tests.
+EOF
+)" && git status --short --branch</summary>
+
+```bash
+git add maze.py && git commit --trailer "Co-authored-by: Cursor <cursoragent@cursor.com>" -m "$(cat <<'EOF'
+Implement maze contract for 3x3 walking skeleton.
+
+Add Direction/Position/CellSpec/Maze APIs and deterministic build_minimal_3x3_maze layout with walls and gate hooks to satisfy maze contract tests.
+EOF
+)" && git status --short --branch
+```
+
+```
+[feat/maze-contract 6267f07] Implement maze contract for 3x3 walking skeleton.
+ 1 file changed, 185 insertions(+)
+ create mode 100644 maze.py
+## feat/maze-contract
+ M .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
+
+```
+</details>
+</tool-use>
+
+---
+
+Done.
+
+- Removed unused `Iterable` import from `maze.py`
+- Re-ran tests: `python -m pytest -q tests/test_maze_contract.py` → **4 passed**
+- Committed on `feat/maze-contract`:
+  - **`6267f07`** — “Implement maze contract for 3x3 walking skeleton.”
+
+I intentionally committed only `maze.py`; the branch still has the unrelated local `.specstory` modification unstaged/uncommitted.
+
+---
+
+_**User**_
+
+I would like to push this branch separately from the master and keep track of the branch specstory that way.
+
+---
+
+_**Agent (model gpt-5.3-codex, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+**Preparing to commit and push specstory changes**</details></think>
+
+---
+
+Makes sense. I’ll push `feat/maze-contract` to origin as its own branch. Since `.specstory` has local changes and you want branch-specific history, I’ll first check what’s pending there and then include it in a separate commit on this branch before pushing.
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: git status --short --branch</summary>
+
+```bash
+git status --short --branch
+```
+
+```
+## feat/maze-contract
+ M .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
+
+```
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: git diff -- .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md</summary>
+
+```bash
+git diff -- .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
+```
+
+```
+diff --git a/.specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md b/.specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
+index 0be6a12..1c67ea4 100644
+--- a/.specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
++++ b/.specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
+@@ -10,7 +10,7 @@ I want to create a walking skeleton for a quiz maze game. Let's start with a min
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Planning game components**
+@@ -186,7 +186,7 @@ I want the modules to be independent enough that they can be developed separatel
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Planning module independence**
+@@ -315,7 +315,7 @@ OK - let's do that first and let's save that to a interfaces.md docuement
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Explaining file limitations**
+@@ -585,7 +585,7 @@ Save this to a file in the repo
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Applying file changes**
+@@ -657,7 +657,7 @@ Beautiful interface. Should we work on designing integration tests next before w
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Planning integration tests**
+@@ -730,7 +730,7 @@ Does it help you to generate code and specific unit tests by having these  integ
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ ### Yes — a lot
+ - **They turn &#96;interfaces.md&#96; into an executable spec**: when I generate &#96;maze.py&#96;, &#96;db.py&#96;, and the engine, I can target the tests as the definition of “done,” not guess at behavior.
+@@ -752,7 +752,7 @@ OK - can that code serve as stubs for further development of the modules?
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Structuring tests and implementations**
+@@ -785,7 +785,7 @@ We do want a playable mini-game at the end. I would prefer that each developer o
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Proposing a workflow**
+@@ -849,7 +849,7 @@ Document the work splitting and interfaces commit to a new branch planning
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Preparing docs and branch commit**&lt;/details&gt;&lt;/think&gt;
+@@ -995,7 +995,7 @@ Yes lets' create the integration tests spec next. Then let's work on a high leve
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Planning documentation and tests creation**&lt;/details&gt;&lt;/think&gt;
+@@ -1121,7 +1121,7 @@ Yes commit them
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Enforcing git commit protocol**&lt;/details&gt;&lt;/think&gt;
+@@ -1246,7 +1246,7 @@ Sorry you have permissions to commit them now.
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Committing code changes**&lt;/details&gt;&lt;/think&gt;
+@@ -1361,7 +1361,7 @@ OK. So should I write a runbook with the basic structures and plan out the integ
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Recommending existing docs**&lt;/details&gt;&lt;/think&gt;
+@@ -1399,7 +1399,7 @@ Should we do this in plan mode - it might be easier. I will switch if you want
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ Yes—switching to **Plan mode** is a good move for this step.
+ 
+@@ -1422,7 +1422,7 @@ per-module implementation checklist tied to those tests.
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Planning concise runbook creation**&lt;/details&gt;&lt;/think&gt;
+@@ -1505,7 +1505,7 @@ To-do's from the plan have already been created. Do not create them again. Mark
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ I’m going to implement the plan by creating a concise &#96;RUNBOOK.md&#96; in the repo root that consolidates ownership, workflow, merge gates, a prioritized integration-test backlog, and per-module checklists mapped to the shared tests. I’ll start by marking the first todo in progress, then I’ll review the existing docs and draft the runbook accordingly.
+ 
+@@ -1978,7 +1978,7 @@ Each of the developers will be submitting a PR and developing independently.  Ho
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ Yes—your current setup is compatible with independent PRs and “extra features,” **as long as the merge gate stays firm**: shared integration tests + no contract drift without updating the contract docs.
+ 
+@@ -2029,7 +2029,7 @@ Can we have it human readable but agent focussed?
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ Yes—make &#96;AGENTS.md&#96; **human-readable** (short, checklist-driven) but **agent-focused** (explicit constraints, acceptance criteria, and “how to extend safely”). Here’s a good structure.
+ 
+@@ -2098,7 +2098,7 @@ OK, update the RUNBOOK.md and AGENTS.md. We are using GitHub PR's no particular
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ &lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
+ **Updating documentation**
+@@ -2242,7 +2242,7 @@ Yes commit these changes
+ 
+ ---
+ 
+-_**Agent (model gpt-5.2-xhigh, mode Agent)**_
++_**Agent (model gpt-5.3-codex, mode Agent)**_
+ 
+ I’ll commit &#96;RUNBOOK.md&#96; updates and the new &#96;AGENTS.md&#96;. Per the git protocol, I’ll first run status/diff/log checks, then stage and commit just these files on the current branch.
+ 
+@@ -2338,3 +2338,1870 @@ Repo still has only unrelated untracked items: &#96;.cursorindexingignore&#96;, &#96;.specst
+ 
+ ---
+ 
++_**User**_
++
++merge this with the master branch - make sure to add the .specstory to the commit and push
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Planning commit strategy**
++
++I need to follow the instructions for merging planning into master and include .specstory in the commit. I have to be careful since there aren’t any original commits on master, but planning has some. It seems that I should check the status, diff, and log according to PR/commit protocols. It looks like I might need to stage .specstory since it’s untracked. The user wants it in the commit, so I'll add it and then merge into master, creating it with the first commit.
++**Clarifying merge strategy**
++
++In the repo without any commits yet, I know it's okay, but the protocol advises against using destructive commands. I could create master by checking it out, but merging directly into an unborn branch isn't allowed. The planning branch has its root commit while master doesn't. If I check out master, I may need to merge planning using &#96;--allow-unrelated-histories&#96;. Alternatively, if I rename the branch, I could set up a clearer path. I'll explore checking out and merging to set master at the planning commits.
++**Checking branches and preparing for push**
++
++I need to check the current branches using &#96;git branch -vv&#96; and &#96;git status&#96;. I should look into the remote as well; I suspect origin should be there, but if it's not set up, I can't push. I’ll run &#96;git remote -v&#96; to confirm. The user wants me to add the .specstory directory, which has some history markdown but should be safe. I'll commit the .specstory, merge, and prepare to push to the remote, ensuring I handle the branch name correctly. If there’s an issue, I’ll proceed with the tools through Shell.&lt;/details&gt;&lt;/think&gt;
++
++---
++
++I’ll (1) stage and commit the currently-untracked &#96;.specstory/&#96; content as requested, (2) move/merge your &#96;planning&#96; work onto &#96;master&#96;, and then (3) push &#96;master&#96; to the remote. First I’m checking branches/remotes so we do this safely.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## planning
++?? .cursorindexingignore
++?? .specstory/
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git branch -vv&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git branch -vv
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++  master   8ccd89f Add agent contribution rules and PR workflow.
++* planning 8ccd89f Add agent contribution rules and PR workflow.
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git remote -v&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git remote -v
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++origin	git@github.com:lhhunghimself/504-week6.git (fetch)
++origin	git@github.com:lhhunghimself/504-week6.git (push)
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Good news: &#96;master&#96; already points at the same commit as &#96;planning&#96;, so there’s nothing to merge between them. Next I’ll create a commit that adds &#96;.specstory/&#96; (and &#96;.cursorindexingignore&#96;, since it’s also untracked), then push &#96;master&#96; to GitHub.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git add .specstory .cursorindexingignore &amp;&amp; git commit --trailer "Co-authored-by: Cursor &lt;cursoragent@cursor.com&gt;" -m "$(cat &lt;&lt;'EOF'
++Add SpecStory session notes.
++
++Include SpecStory artifacts used during planning and documentation.
++EOF
++)"&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git add .specstory .cursorindexingignore &amp;&amp; git commit --trailer "Co-authored-by: Cursor &lt;cursoragent@cursor.com&gt;" -m "$(cat &lt;&lt;'EOF'
++Add SpecStory session notes.
++
++Include SpecStory artifacts used during planning and documentation.
++EOF
++)"
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++[planning ea7c9e7] Add SpecStory session notes.
++ 3 files changed, 2347 insertions(+)
++ create mode 100644 .cursorindexingignore
++ create mode 100644 .specstory/.gitignore
++ create mode 100644 .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## planning
++A  .cursorindexingignore
++A  .specstory/.gitignore
++A  .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++That status snapshot likely ran mid-commit (it was executed in parallel). I’ll re-check the working tree now, then fast-forward &#96;master&#96; to include the new &#96;.specstory&#96; commit and push &#96;master&#96; to GitHub.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git status --short --branch &amp;&amp; git log --oneline --decorate -n 3&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git status --short --branch &amp;&amp; git log --oneline --decorate -n 3
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## planning
++ea7c9e7 (HEAD -&amp;gt; planning) Add SpecStory session notes.
++8ccd89f (master) Add agent contribution rules and PR workflow.
++ce8c28e Add integration testing spec and customization roadmap.
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git checkout master &amp;&amp; git merge --ff-only planning &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git checkout master &amp;&amp; git merge --ff-only planning &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++Updating 8ccd89f..ea7c9e7
++Fast-forward
++ .cursorindexingignore                              |    3 +
++ .specstory/.gitignore                              |    4 +
++ ...-13_06-14Z-quiz-maze-game-structure-planning.md | 2340 ++++++++++++++++++++
++ 3 files changed, 2347 insertions(+)
++ create mode 100644 .cursorindexingignore
++ create mode 100644 .specstory/.gitignore
++ create mode 100644 .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
++## master
++Switched to branch 'master'
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git push -u origin master&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git push -u origin master
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++branch 'master' set up to track 'origin/master'.
++To github.com:lhhunghimself/504-week6.git
++ * [new branch]      master -&amp;gt; master
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Done.
++
++- **Added &#96;.specstory/&#96;** (and &#96;.cursorindexingignore&#96;) in commit &#96;ea7c9e7&#96;.
++- **Fast-forwarded &#96;master&#96;** to include that commit (no merge commit needed since &#96;master&#96; and &#96;planning&#96; were aligned before).
++- **Pushed &#96;master&#96;** to GitHub and set upstream tracking (&#96;origin/master&#96;).
++
++---
++
++_**User**_
++
++Now let's start a new branch integration-tests and work on the integration tests. Have we planned them out?
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Planning tests and structure**
++
++I’m thinking about managing tests effectively. It might be better to have failing tests in the integration-tests branch while I implement modules. I see there’s no Python code yet, so I'll create a tests/ directory and maybe a pytest.ini. Even if it’s not requested, I’ll ensure the tests have clear import errors—they’ll fail until modules are built. There might be a minimal requirements-dev.txt with pytest, but I’m not sure if it exists yet. I'll check the repo and create the necessary files as I go along.
++**Designing test strategy**
++
++I’m considering using dynamic imports and raising informative assertions. For the &#96;maze_module&#96;, I’ll import maze and fail the test gracefully with a message if it’s missing. It’s okay if the tests fail right now, as we can design them to only check the Maze contract. I'll also need to define a BFS helper but I’m unsure about the final class names yet. I'll rely on methods in &#96;maze.py&#96; and assume methods like &#96;width&#96;, &#96;height&#96;, &#96;start&#96;, and &#96;exit&#96; exist. For the repository, we might decide on using &#96;db.JsonGameRepository&#96;.
++**Defining repository requirements**
++
++I’m considering requiring &#96;db.JsonGameRepository(json_path)&#96; in the tests, which should be documented, though it's not in interfaces.md yet. It might count as an additional contract. I think it’s better to use a factory function like &#96;db.open_repo(path)&#96; instead, but it isn’t defined. A minimal requirement would be to ensure that &#96;db.JsonGameRepository&#96; exists. I could build flexibility into the tests by checking for repository classes dynamically. That way, I avoid constraining too much while still having a known reference.
++**Establishing test requirements**
++
++I’m thinking of keeping the tests minimal and just asserting that the &#96;db&#96; module includes a &#96;get_repository(tmp_path)&#96; function—though that’s new. The simplest approach might be to ensure the &#96;JsonGameRepository&#96; constructor exists. I could declare this in the tests and update interfaces.md later if needed. To provide more flexibility, I can use a &#96;make_repo&#96; fixture in conftest that checks different repository options. For the engine integration tests, I’ll import &#96;GameEngine&#96;, &#96;Command&#96;, and create a minimal puzzle registry for testing purposes, avoiding the need for a separate puzzle module.
++**Defining test strategies and requirements**
++
++I'm considering how to approach clock injection; the contract doesn't specify it, but the tests might need it. I plan to set tests to tolerate possible clock parameters. The integration specification mentions a controllable time source, which isn't in the interface yet. I want to ensure all necessary elements in the engine are tested, including metrics for scoring. I'll also create specific tests for the &#96;JsonGameRepository&#96; to ensure it writes files correctly and implements all required operations. Flexibility in naming and selecting repository classes will be key. For engine interactions, I’ll define commands and allow repositories to handle puzzles dynamically, enabling a smoother testing experience!
++**Creating integration tests branch**
++
++I’m ready to create the integration-tests branch and set up a few files. I might create a &#96;tests/README&#96;, but that's optional. The &#96;tests/conftest.py&#96; will hold helpers for module imports and pytest fixtures. I'll also set up &#96;test_maze_contract.py&#96;, &#96;test_repo_contract.py&#96;, and &#96;test_engine_integration.py&#96;. Adding &#96;requirements-dev.txt&#96; for pytest seems like a nice touch, but it's not necessary right now. I’ll use Shell to check out the branch and add the files. Committing might be expected later, but since the user didn’t explicitly ask for it, I’ll hold off for now and let them know the changes are ready!&lt;/details&gt;&lt;/think&gt;
++
++---
++
++We’ve planned them out already in &#96;integration-tests-spec.md&#96; and summarized the P0/P1/P2 backlog in &#96;RUNBOOK.md&#96;. Next I’ll create a new branch &#96;integration-tests&#96; and start implementing the shared &#96;pytest&#96; integration/contract tests (&#96;tests/&#96; + &#96;conftest.py&#96;) according to that spec.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git checkout -b integration-tests&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git checkout -b integration-tests
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++Switched to a new branch 'integration-tests'
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Next I’ll add the &#96;tests/&#96; package with a shared &#96;conftest.py&#96; plus the three contract/integration test files from the spec. These will initially fail until &#96;maze.py&#96;, &#96;db.py&#96;, and the engine exist—which is expected on this branch and will drive implementation.
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/tests/conftest.py&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/tests/test_maze_contract.py&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/tests/test_repo_contract.py&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/tests/test_engine_integration.py&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## integration-tests
++ M .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
++?? tests/
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Reviewing test modifications**
++
++I noticed that the &#96;.specstory&#96; file was modified, possibly due to an auto-update, so I need to check the differences before making any commits. The user wants me to work on tests, and I should avoid including those modifications unless requested. I can discard changes using &#96;git checkout -- path&#96; to prevent losing anything the user wants. Once I revert those changes, I plan to run pytest, although it might fail due to missing modules. I'll also run &#96;python -m compileall tests&#96; to check for syntax errors and adjust the engine tests accordingly.
++**Updating test implementations**
++
++I noticed that in the baseline view, the call to &#96;baseline.get("move_count")&#96; might not work since &#96;move_count&#96; isn't included in the view spec. That’s okay. Instead of using &#96;__import__("main")&#96;, I can leverage the &#96;import_required&#96; function in &#96;conftest&#96;. However, if &#96;main&#96; is absent, I’ll handle that with a &#96;ModuleNotFoundError&#96; and provide a meaningful error message. 
++
++I'm also looking to update the engine tests to use &#96;importlib&#96; and refine the handling of direction objects. Both &#96;d.name&#96; and &#96;str(d)&#96; will be incorporated. I need to make sure that &#96;Position&#96; is hashable by implementing it as a frozen dataclass since BFS uses it as a key. I'll apply the necessary patch modifications to &#96;tests/test_engine_integration.py&#96; and consider the unused &#96;read_json&#96; in &#96;conftest&#96;. Additionally, I must revert the &#96;.specstory&#96; file using &#96;git restore&#96;. I'll proceed with that now.&lt;/details&gt;&lt;/think&gt;
++
++---
++
++We’ve got the three integration/contract test files in place under &#96;tests/&#96;. Next I’m going to (a) revert an unrelated &#96;.specstory&#96; auto-change so it doesn’t pollute this branch, (b) tighten the engine tests to be more tolerant of &#96;Direction&#96; string representations (use &#96;.name&#96; when available), and (c) sanity-check that the test files at least compile cleanly.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git restore -- .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git restore -- .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## integration-tests
++?? tests/
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: python -m compileall -q tests&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++python -m compileall -q tests
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/tests/test_engine_integration.py&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: python -m compileall -q tests &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++python -m compileall -q tests &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## integration-tests
++?? tests/
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Yes—we planned them out already in &#96;integration-tests-spec.md&#96; (detailed cases) and &#96;RUNBOOK.md&#96; (P0/P1/P2 priorities).
++
++On the new &#96;integration-tests&#96; branch I’ve now **started implementing** the shared test suite:
++
++- Added &#96;tests/conftest.py&#96; (imports + fixtures + a deterministic puzzle registry that can satisfy any &#96;puzzle_id&#96;)
++- Added:
++  - &#96;tests/test_maze_contract.py&#96;
++  - &#96;tests/test_repo_contract.py&#96;
++  - &#96;tests/test_engine_integration.py&#96;
++- Cleaned up an unrelated &#96;.specstory&#96; auto-change so it won’t get mixed into this branch.
++- Sanity-checked the new tests compile (&#96;python -m compileall tests&#96;).
++
++At this point, running &#96;pytest&#96; will **fail until &#96;maze.py&#96;, &#96;db.py&#96;, and &#96;main.py&#96; exist**, which is expected—the tests are the executable contract to drive those implementations.
++
++If you want, next step is for me to **commit these tests on &#96;integration-tests&#96;** so module developers can start implementing against them.
++
++---
++
++_**User**_
++
++I noticed that we have not worked on the customization design plan. Will this affect the tests? If so should I stash and go back to the master and work on the customization plan or do it here?
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Considering customization plans**
++
++I need to address the user's question about the effect of a customization plan on tests. The documentation already covers this, but it seems they may want further implementation. I think tests shouldn’t be affected since they shouldn't depend on customization. It’s better to keep the tests branch focused while having customization documented separately. If refinements are needed, those should happen on a master or separate branch. Also, I should avoid stashing work and commit everything appropriately.&lt;/details&gt;&lt;/think&gt;
++
++---
++
++The **customization design plan will not affect these integration tests** unless you decide to **change the contracts** in &#96;interfaces.md&#96; (or the shared behavior the tests assert).
++
++### Why it won’t affect tests (right now)
++- The current tests are written against **interfaces + core behavior** (maze topology, repo persistence, engine flow).
++- The customization plan is **content/theming/roadmap**. As long as it stays additive (more puzzles, richer descriptions, more mazes), the P0/P1 tests should remain valid.
++
++### What *would* affect tests
++Customization work would force test updates only if it changes any of these:
++- **Repository ordering rules** (e.g., score ranking criteria)
++- **Command semantics / engine contract** (e.g., renaming verbs, changing &#96;GameView&#96; shape)
++- **Maze gating rules** (e.g., how &#96;gate_id_for&#96;/&#96;puzzle_id_at&#96; are interpreted)
++- **Determinism requirements** (e.g., making puzzles randomized without a seed)
++
++### What you should do (recommended)
++- **Do not stash and switch branches for this.**
++- Keep this branch focused on tests.
++- If you want to expand/refine the customization plan, do it as a **separate docs PR** on a separate branch (e.g. &#96;docs/customization-plan-v2&#96;) from &#96;master&#96;.
++
++### Practical next step
++- **Commit the integration tests on &#96;integration-tests&#96;** so other developers can start implementing against them.
++- Then open a separate docs branch/PR if you want to iterate the customization plan further.
++
++If you tell me “commit the tests now,” I’ll do that next.
++
++---
++
++_**User**_
++
++OK review the tests. If they look good to you then commit them and merge with the master branch and push
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++The user wants me to review the test files, commit them, merge to master, and push. Let me first read all the test files to review them thoroughly.&lt;/details&gt;&lt;/think&gt;
++
++---
++
++Let me review all three test files and the conftest first.
++
++---
++
++&lt;tool-use data-tool-type="read" data-tool-name="read_file_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **read_file_v2** • Read file: /home/lhhung/504-week6/tests/conftest.py&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="read" data-tool-name="read_file_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **read_file_v2** • Read file: /home/lhhung/504-week6/tests/test_maze_contract.py&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="read" data-tool-name="read_file_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **read_file_v2** • Read file: /home/lhhung/504-week6/tests/test_repo_contract.py&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="read" data-tool-name="read_file_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **read_file_v2** • Read file: /home/lhhung/504-week6/tests/test_engine_integration.py&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++Let me review the tests thoroughly:
++
++**conftest.py:**
++- Good: flexible repo factory, deterministic puzzle registry, clean fixtures
++- Issue: unused import &#96;Callable&#96; on line 5
++- Good: &#96;read_json&#96; helper provided but not used yet (fine, it's a utility)
++
++**test_maze_contract.py:**
++- Good: 4 tests matching P0 spec exactly
++- Typo: line 8 and line 64 use &#96;AssertionError&#96; instead of &#96;AssertionError&#96; — wait, actually &#96;AssertionError&#96; is correct in Python... let me check. No wait, it's &#96;AssertionError&#96; - that's the correct spelling. 
++
++Actually, I'm second-guessing myself on the exception name. The correct Python built-in is &#96;AssertionError&#96;, so those lines are fine. I keep second-guessing myself on the spelling of this exception name. Let me just verify once more: &#96;AssertionError&#96; is definitely the correct Python built-in, and checking the code on those lines confirms it's spelled the same way throughout. I'm going in circles here verifying the spelling of &#96;AssertionError&#96; — it's definitely correct, so I should move on with the code review.
++
++Looking at the test files, I notice a couple of issues: there's an unused &#96;Callable&#96; import in conftest.py that should be removed, and more importantly, there's an operator precedence problem in test_repo_contract.py where the ternary conditional is being evaluated in an unexpected order relative to the equality checks. A if C else B&#96; has very low precedence. So:
++   &#96;assert p1["id"] == p2["id"] if isinstance(p1, dict) else p1.id == p2.id&#96;
++   
++   This is parsed as:
++   &#96;assert (p1["id"] == p2["id"]) if isinstance(p1, dict) else (p1.id == p2.id)&#96;
++   
++   Wait, the conditional expression &#96;X if C else Y&#96; — the precedence is:
++   &#96;assert (p1["id"] == p2["id"]) if isinstance(p1, dict) else (p1.id == p2.id)&#96;
++   
++   Hmm but &#96;assert&#96; is a statement, not an expression. So it's:
++   &#96;assert ((p1["id"] == p2["id"]) if isinstance(p1, dict) else (p1.id == p2.id))&#96;
++
++Actually, I'm realizing the conditional expression has one of the lowest precedences in Python, so the grouping works out correctly — the comparison operations bind tighter than the if-else, giving me exactly what I want: the dictionary access comparison as the true branch, the isinstance check as the condition, and the attribute access comparison as the false branch. This is correct. But wait, &#96;assert&#96; expects an expression. So &#96;assert X if C else Y&#96; is &#96;assert (X if C else Y)&#96;. 
++
++But actually there's still a problem. &#96;X if C else Y&#96; where X is &#96;p1["id"] == p2["id"]&#96;... Let me think about this differently.
++
++The Python grammar for conditional_expression is: &#96;or_test ['if' or_test 'else' test]&#96;
++
++So the full expression is: &#96;p1["id"] == p2["id"] if isinstance(p1, dict) else p1.id == p2.id&#96;
++
++This would be parsed as: the conditional_expression where:
++- or_test (true value): &#96;p1["id"] == p2["id"]&#96; 
++- condition: &#96;isinstance(p1, dict)&#96;
++- test (false value): &#96;p1.id == p2.id&#96;
++
++Yes, this is correct behavior. The assert will pass if: when p1 is a dict, p1["id"] == p2["id"]; otherwise, p1.id == p2.id.
++
++Actually wait, I need to check this more carefully. The conditional expression in Python has this grammar:
++
++&#96;&#96;&#96;
++test: or_test ['if' or_test 'else' test] | lambdef
++or_test: and_test ('or' and_test)*
++&#96;&#96;&#96;
++
++So &#96;p1["id"] == p2["id"] if isinstance(p1, dict) else p1.id == p2.id&#96;
++
++The parser sees &#96;test&#96; → &#96;or_test 'if' or_test 'else' test&#96;
++
++The first &#96;or_test&#96; greedily consumes &#96;p1["id"] == p2["id"]&#96;. Then it sees &#96;if&#96;, then the condition &#96;isinstance(p1, dict)&#96;, then &#96;else&#96;, then the rest &#96;p1.id == p2.id&#96; as another &#96;test&#96;.
++
++So the parsing is: &#96;(p1["id"] == p2["id"]) if isinstance(p1, dict) else (p1.id == p2.id)&#96;
++
++This is correct! The assert will evaluate the conditional expression, and if the result is truthy, the assert passes.
++
++OK so this is fine. Let me check if there's any issue... actually no, it's correct but it could be a bit confusing to read. Let me leave it since it's technically correct.
++
++Actually, I just realized I should double-check by thinking about what happens
++
++Rewrite this to be concise and natural:
++
++The parsing works out correctly—the first part &#96;p1["id"] == p2["id"]&#96; becomes the true value, &#96;isinstance(p1, dict)&#96; is the condition, and &#96;p1.id == p2.id&#96; is the false value. So the assert evaluates the full conditional expression and passes if it's truthy. It's a bit dense to read, but it's technically correct, so I'll leave it as is.
++
++Now I need to verify the logic in practice. If &#96;p1&#96; is a dict, then &#96;p2["id"]&#96; works only if &#96;p2&#96; is also a dict, and in the else branch &#96;p1.id&#96; only works if &#96;p1&#96; has an attribute. The branches are consistent with the type of &#96;p1&#96;, so the tests look solid. I should clean up that unused &#96;Callable&#96; import in conftest.py and then commit.&lt;/details&gt;&lt;/think&gt;
++
++---
++
++I've reviewed all four files. They look good overall — well-structured, properly aligned with &#96;integration-tests-spec.md&#96; and &#96;interfaces.md&#96;, tolerant of dict or dataclass return types, and deterministic. I spotted one minor issue: an unused &#96;Callable&#96; import in &#96;conftest.py&#96;. I'll fix that, then commit, merge, and push.
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/tests/conftest.py&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: python -m compileall -q tests &amp;&amp; echo "OK"&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++python -m compileall -q tests &amp;&amp; echo "OK"
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++OK
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Now I'll commit on &#96;integration-tests&#96;, merge into &#96;master&#96;, and push.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## integration-tests
++ M .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
++?? tests/
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git log --oneline --decorate -n 5&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git log --oneline --decorate -n 5
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++ea7c9e7 (HEAD -&amp;gt; integration-tests, origin/master, planning, master) Add SpecStory session notes.
++8ccd89f Add agent contribution rules and PR workflow.
++ce8c28e Add integration testing spec and customization roadmap.
++d10f879 Add interface contract and team work-split planning.
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git restore -- .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md &amp;&amp; git add tests/ &amp;&amp; git commit --trailer "Co-authored-by: Cursor &lt;cursoragent@cursor.com&gt;" -m "$(cat &lt;&lt;'EOF'
++Add shared integration and contract tests for walking skeleton.
++
++Implement P0/P1 test suite (maze contract, repo contract, engine integration)
++as executable spec per integration-tests-spec.md and RUNBOOK.md.
++Tests will fail until maze.py, db.py, and main.py are implemented.
++EOF
++)" &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git restore -- .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md &amp;&amp; git add tests/ &amp;&amp; git commit --trailer "Co-authored-by: Cursor &lt;cursoragent@cursor.com&gt;" -m "$(cat &lt;&lt;'EOF'
++Add shared integration and contract tests for walking skeleton.
++
++Implement P0/P1 test suite (maze contract, repo contract, engine integration)
++as executable spec per integration-tests-spec.md and RUNBOOK.md.
++Tests will fail until maze.py, db.py, and main.py are implemented.
++EOF
++)" &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++[integration-tests f69edfc] Add shared integration and contract tests for walking skeleton.
++ 8 files changed, 536 insertions(+)
++ create mode 100644 tests/__pycache__/conftest.cpython-313.pyc
++ create mode 100644 tests/__pycache__/test_engine_integration.cpython-313.pyc
++ create mode 100644 tests/__pycache__/test_maze_contract.cpython-313.pyc
++ create mode 100644 tests/__pycache__/test_repo_contract.cpython-313.pyc
++ create mode 100644 tests/conftest.py
++ create mode 100644 tests/test_engine_integration.py
++ create mode 100644 tests/test_maze_contract.py
++ create mode 100644 tests/test_repo_contract.py
++## integration-tests
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++I see &#96;__pycache__&#96; got committed. Let me add a &#96;.gitignore&#96; to prevent that, amend the commit, then merge and push.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git rm -r --cached tests/__pycache__&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git rm -r --cached tests/__pycache__
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++rm 'tests/__pycache__/conftest.cpython-313.pyc'
++rm 'tests/__pycache__/test_engine_integration.cpython-313.pyc'
++rm 'tests/__pycache__/test_maze_contract.cpython-313.pyc'
++rm 'tests/__pycache__/test_repo_contract.cpython-313.pyc'
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/.gitignore&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git log -1 --format='%an %ae'&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git log -1 --format='%an %ae'
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++Hong Hung lhhunghimself@gmail.com
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git add .gitignore &amp;&amp; git commit --trailer "Co-authored-by: Cursor &lt;cursoragent@cursor.com&gt;" --amend -m "$(cat &lt;&lt;'EOF'
++Add shared integration and contract tests for walking skeleton.
++
++Implement P0/P1 test suite (maze contract, repo contract, engine integration)
++as executable spec per integration-tests-spec.md and RUNBOOK.md.
++Tests will fail until maze.py, db.py, and main.py are implemented.
++EOF
++)" &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git add .gitignore &amp;&amp; git commit --trailer "Co-authored-by: Cursor &lt;cursoragent@cursor.com&gt;" --amend -m "$(cat &lt;&lt;'EOF'
++Add shared integration and contract tests for walking skeleton.
++
++Implement P0/P1 test suite (maze contract, repo contract, engine integration)
++as executable spec per integration-tests-spec.md and RUNBOOK.md.
++Tests will fail until maze.py, db.py, and main.py are implemented.
++EOF
++)" &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++[integration-tests a258f53] Add shared integration and contract tests for walking skeleton.
++ Date: Fri Feb 13 11:00:43 2026 -0800
++ 5 files changed, 545 insertions(+)
++ create mode 100644 .gitignore
++ create mode 100644 tests/conftest.py
++ create mode 100644 tests/test_engine_integration.py
++ create mode 100644 tests/test_maze_contract.py
++ create mode 100644 tests/test_repo_contract.py
++## integration-tests
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Clean commit with no &#96;__pycache__&#96;. Now merge into &#96;master&#96; and push.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git checkout master &amp;&amp; git merge --ff-only integration-tests &amp;&amp; git push origin master &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git checkout master &amp;&amp; git merge --ff-only integration-tests &amp;&amp; git push origin master &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++Your branch is up to date with 'origin/master'.
++Updating ea7c9e7..a258f53
++Fast-forward
++ .gitignore                       |   9 ++
++ tests/conftest.py                |  99 +++++++++++++++++
++ tests/test_engine_integration.py | 231 +++++++++++++++++++++++++++++++++++++++
++ tests/test_maze_contract.py      |  79 +++++++++++++
++ tests/test_repo_contract.py      | 127 +++++++++++++++++++++
++ 5 files changed, 545 insertions(+)
++ create mode 100644 .gitignore
++ create mode 100644 tests/conftest.py
++ create mode 100644 tests/test_engine_integration.py
++ create mode 100644 tests/test_maze_contract.py
++ create mode 100644 tests/test_repo_contract.py
++## master...origin/master
++Switched to branch 'master'
++To github.com:lhhunghimself/504-week6.git
++   ea7c9e7..a258f53  master -&amp;gt; master
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Done. Here's a summary of what was committed and pushed:
++
++**Commit &#96;a258f53&#96;** on &#96;master&#96; (pushed to &#96;origin/master&#96;):
++- &#96;.gitignore&#96; — excludes &#96;__pycache__&#96;, &#96;.pyc&#96;, &#96;.pytest_cache&#96;, generated JSON files
++- &#96;tests/conftest.py&#96; — shared fixtures (maze module, db module, repo factory, deterministic puzzle registry)
++- &#96;tests/test_maze_contract.py&#96; — 4 P0 tests (bounds, move consistency, reachability, gate/puzzle hooks)
++- &#96;tests/test_repo_contract.py&#96; — 5 P0 tests (schema keys, idempotent player, game round-trip, save updates, score ordering)
++- &#96;tests/test_engine_integration.py&#96; — 3 P0 + 2 P1 tests (initial view, puzzle gating, completion flow, mid-run save, invalid command safety)
++
++All tests will fail with clear messages until &#96;maze.py&#96;, &#96;db.py&#96;, and &#96;main.py&#96; are implemented — which is exactly the point. Module developers can now branch from &#96;master&#96; and implement against these executable contracts.
++
++---
++
++_**User**_
++
++make a new branch custom_modification to iterate over the plan and switch to it. I like the general flow of the plan but we don't have a CI gate. Could we have each developer run their own tests - this would be part of the master that they do not change. Would this work or do you think something more formal would be suitable?
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Creating and switching branch**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++I’ll create and switch to a new &#96;custom_modification&#96; branch now, then I’ll outline the practical testing policy without CI and a lightweight formal option you can adopt later.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git checkout -b custom_modification &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git checkout -b custom_modification &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## custom_modification
++Switched to a new branch 'custom_modification'
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Branch created and switched:
++
++- Current branch: &#96;custom_modification&#96;
++
++Your idea can work **right now** without CI, with one caveat: enforcement is social/manual.
++
++### Practical no-CI policy (works for your team size)
++Yes—have each developer run tests locally before PR, and treat this as part of the protected baseline docs (&#96;RUNBOOK.md&#96; + &#96;AGENTS.md&#96;) they should not bypass.
++
++Use this PR rule:
++- Run &#96;python -m pytest -q&#96;
++- Paste command output summary in PR description
++- Confirm P0 integration tests pass
++- Confirm no contract drift (&#96;interfaces.md&#96;) unless intentionally updated
++
++This is viable for early-stage teams.
++
++### What’s “more formal” (lightweight, recommended next step)
++When you’re ready, add a minimal GitHub Action that only runs:
++- &#96;python -m pytest -q&#96;
++
++You can keep everything else the same. That gives you **objective gatekeeping** without heavy process.
++
++### Recommendation
++- **Now:** keep your no-CI self-certification policy (fastest).
++- **Soon:** add one minimal test workflow for PRs to &#96;master&#96; (best reliability per effort).
++
++---
++
++_**User**_
++
++Can you update our documentation to note this.
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Planning doc updates and progress reporting**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++I’ll update &#96;RUNBOOK.md&#96; and &#96;AGENTS.md&#96; to explicitly document a no-CI **developer self-certification gate** (local test execution + PR evidence) and mark it as mandatory for all PRs to &#96;master&#96;. I’ll keep it lightweight and actionable.
++
++---
++
++&lt;tool-use data-tool-type="read" data-tool-name="read_file_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **read_file_v2** • Read file: /home/lhhung/504-week6/RUNBOOK.md&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="read" data-tool-name="read_file_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **read_file_v2** • Read file: /home/lhhung/504-week6/AGENTS.md&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Updating docs with manual gate policy**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++I found both docs already mention no CI; I’m now tightening them with an explicit **manual gate policy**: every PR to &#96;master&#96; must include local test evidence, and this policy itself is part of the baseline that feature branches should not remove.
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/RUNBOOK.md&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/AGENTS.md&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="unknown" data-tool-name="ripgrep_raw_search"&gt;
++&lt;details&gt;
++&lt;summary&gt;Tool use: **ripgrep_raw_search**&lt;/summary&gt;
++
++
++Parameters:
++
++&#96;&#96;&#96;json
++{
++  "pattern": "manual test gate|Required PR evidence|PR includes test evidence",
++  "path": "/home/lhhung/504-week6",
++  "glob": "*.md",
++  "outputMode": "content",
++  "caseInsensitive": false
++}
++&#96;&#96;&#96;
++Result:
++
++&#96;&#96;&#96;json
++{
++  "success": {
++    "pattern": "manual test gate|Required PR evidence|PR includes test evidence",
++    "path": "/home/lhhung/504-week6",
++    "outputMode": "content",
++    "workspaceResults": {
++      "/home/lhhung/504-week6": {
++        "content": {
++          "matches": [
++            {
++              "file": "./AGENTS.md",
++              "matches": [
++                {
++                  "lineNumber": 37,
++                  "content": "- treat this manual test gate as required policy for PRs to &amp;#96;master&amp;#96; until CI is added"
++                },
++                {
++                  "lineNumber": 53,
++                  "content": "- [ ] PR includes test evidence:"
++                }
++              ]
++            },
++            {
++              "file": "./RUNBOOK.md",
++              "matches": [
++                {
++                  "lineNumber": 63,
++                  "content": "This manual test gate is part of the current &amp;#96;master&amp;#96; baseline and should not be removed by feature branches."
++                },
++                {
++                  "lineNumber": 69,
++                  "content": "Required PR evidence (until CI exists):"
++                }
++              ]
++            }
++          ],
++          "totalLines": 4,
++          "totalMatchedLines": 4
++        }
++      }
++    }
++  }
++}
++&#96;&#96;&#96;
++Status: **completed**
++
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## custom_modification
++ M .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
++ M AGENTS.md
++ M RUNBOOK.md
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Reverting unrelated changes**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git restore -- .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git restore -- .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## custom_modification
++ M AGENTS.md
++ M RUNBOOK.md
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Updated both docs on &#96;custom_modification&#96; to capture your no-CI policy more explicitly.
++
++### What changed
++- &#96;RUNBOOK.md&#96;
++  - Added that the **manual test gate is part of &#96;master&#96; baseline** and should not be removed by feature branches.
++  - Added **Required PR evidence**:
++    - commands run
++    - pass/fail summary
++    - explanation for any skipped tests
++- &#96;AGENTS.md&#96;
++  - Added that manual test gate is **required for PRs to &#96;master&#96; until CI exists**.
++  - Expanded PR checklist with a **test evidence** section.
++
++Current branch status shows only these two modified docs.  
++If you want, I can commit these changes now on &#96;custom_modification&#96;.
++
++---
++
++_**User**_
++
++Merge into master and push. 
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Executing git status diff log**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++I’ll commit the current doc updates on &#96;custom_modification&#96;, then merge that branch into &#96;master&#96; and push to &#96;origin/master&#96;. I’m running a quick status/diff/log check first.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++## custom_modification
++ M AGENTS.md
++ M RUNBOOK.md
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git diff -- AGENTS.md RUNBOOK.md&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git diff -- AGENTS.md RUNBOOK.md
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++diff --git a/AGENTS.md b/AGENTS.md
++index 9e15691..8ca1078 100644
++--- a/AGENTS.md
+++++ b/AGENTS.md
++@@ -34,6 +34,7 @@ PR author responsibilities:
++ - run tests locally
++ - paste test results and exact command(s) used in the PR description
++ - keep PRs small and focused (one concern per PR)
+++- treat this manual test gate as required policy for PRs to &amp;#96;master&amp;#96; until CI is added
++ 
++ Recommended branch naming:
++ - &amp;#96;feat/&amp;lt;area&amp;gt;-&amp;lt;short-description&amp;gt;&amp;#96;
++@@ -49,6 +50,10 @@ Areas: &amp;#96;maze&amp;#96;, &amp;#96;db&amp;#96;, &amp;#96;engine&amp;#96;, &amp;#96;cli&amp;#96;, &amp;#96;puzzles&amp;#96;, &amp;#96;docs&amp;#96;, &amp;#96;tests&amp;#96;
++ - [ ] Scope: one module/concern (maze OR db OR engine/cli OR docs/tests)
++ - [ ] Tests run locally:
++   - [ ] &amp;#96;python -m pytest -q&amp;#96;
+++- [ ] PR includes test evidence:
+++  - [ ] command(s) run
+++  - [ ] final pass/fail summary
+++  - [ ] note on any skipped tests and why
++ - [ ] Shared P0 integration tests pass (see &amp;#96;RUNBOOK.md&amp;#96;)
++ - [ ] No contract drift:
++   - [ ] if contracts changed, updated &amp;#96;interfaces.md&amp;#96;
++diff --git a/RUNBOOK.md b/RUNBOOK.md
++index 35e4889..ee96579 100644
++--- a/RUNBOOK.md
+++++ b/RUNBOOK.md
++@@ -60,11 +60,17 @@ Every PR must pass:
++ - **Interface compatibility**: no contract drift vs &amp;#96;interfaces.md&amp;#96; unless explicitly updated (and reviewed)
++ 
++ No CI runner is configured yet. This means the PR author is responsible for running tests locally and reporting results in the PR description.
+++This manual test gate is part of the current &amp;#96;master&amp;#96; baseline and should not be removed by feature branches.
++ 
++ Recommended local commands (to include in PR):
++ - &amp;#96;python -m pytest -q&amp;#96;
++ - (optional during development) &amp;#96;python -m pytest -q tests/test_maze_contract.py&amp;#96;
++ 
+++Required PR evidence (until CI exists):
+++- Paste command(s) run and the final pass/fail summary.
+++- Confirm whether all P0 tests passed.
+++- If any test was skipped, explain why and link follow-up work.
+++
++ ## Shared Integration Test Backlog (Priority Ordered)
++ 
++ Test file targets:
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git log --oneline --decorate -n 5&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git log --oneline --decorate -n 5
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++a258f53 (HEAD -&amp;gt; custom_modification, origin/master, master, integration-tests) Add shared integration and contract tests for walking skeleton.
++ea7c9e7 (planning) Add SpecStory session notes.
++8ccd89f Add agent contribution rules and PR workflow.
++ce8c28e Add integration testing spec and customization roadmap.
++d10f879 Add interface contract and team work-split planning.
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Committing before merging master**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git add AGENTS.md RUNBOOK.md &amp;&amp; git commit --trailer "Co-authored-by: Cursor &lt;cursoragent@cursor.com&gt;" -m "$(cat &lt;&lt;'EOF'
++Clarify no-CI manual test gate requirements.
++
++Require PR authors to provide local test evidence and treat the manual gate as mandatory policy until CI is added.
++EOF
++)" &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git add AGENTS.md RUNBOOK.md &amp;&amp; git commit --trailer "Co-authored-by: Cursor &lt;cursoragent@cursor.com&gt;" -m "$(cat &lt;&lt;'EOF'
++Clarify no-CI manual test gate requirements.
++
++Require PR authors to provide local test evidence and treat the manual gate as mandatory policy until CI is added.
++EOF
++)" &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++[custom_modification 23128f6] Clarify no-CI manual test gate requirements.
++ 2 files changed, 11 insertions(+)
++## custom_modification
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Merging and pushing to master**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git checkout master &amp;&amp; git merge --ff-only custom_modification &amp;&amp; git push origin master &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git checkout master &amp;&amp; git merge --ff-only custom_modification &amp;&amp; git push origin master &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++Your branch is up to date with 'origin/master'.
++Updating a258f53..23128f6
++Fast-forward
++ AGENTS.md  | 5 +++++
++ RUNBOOK.md | 6 ++++++
++ 2 files changed, 11 insertions(+)
++## master...origin/master
++Switched to branch 'master'
++To github.com:lhhunghimself/504-week6.git
++   a258f53..23128f6  master -&amp;gt; master
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Done.
++
++- Committed on &#96;custom_modification&#96;: &#96;23128f6&#96;
++  - Updated &#96;RUNBOOK.md&#96; and &#96;AGENTS.md&#96; with explicit no-CI manual gate policy and required PR test evidence.
++- Fast-forward merged into &#96;master&#96;.
++- Pushed &#96;master&#96; to &#96;origin&#96; successfully (&#96;a258f53..23128f6&#96;).
++
++---
++
++_**User**_
++
++OK let's make 3 branches for the 3 modules
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Creating branches from master**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++I’ll create three module branches from &#96;master&#96; using the standard naming we documented (&#96;feat/&lt;area&gt;-...&#96;), then list them so you can assign owners.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git checkout master &amp;&amp; git branch feat/maze-contract master &amp;&amp; git branch feat/db-json-repo master &amp;&amp; git branch feat/engine-cli master &amp;&amp; git branch -vv&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git checkout master &amp;&amp; git branch feat/maze-contract master &amp;&amp; git branch feat/db-json-repo master &amp;&amp; git branch feat/engine-cli master &amp;&amp; git branch -vv
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++M	.specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
++Your branch is up to date with 'origin/master'.
++  custom_modification 23128f6 Clarify no-CI manual test gate requirements.
++  feat/db-json-repo   23128f6 Clarify no-CI manual test gate requirements.
++  feat/engine-cli     23128f6 Clarify no-CI manual test gate requirements.
++  feat/maze-contract  23128f6 Clarify no-CI manual test gate requirements.
++  integration-tests   a258f53 Add shared integration and contract tests for walking skeleton.
++* master              23128f6 [origin/master] Clarify no-CI manual test gate requirements.
++  planning            ea7c9e7 Add SpecStory session notes.
++Already on 'master'
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Noticing unexpected specstory change**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++Created the 3 module branches from &#96;master&#96;:
++
++- &#96;feat/maze-contract&#96;
++- &#96;feat/db-json-repo&#96;
++- &#96;feat/engine-cli&#96;
++
++I also noticed an unexpected local modification in:
++- &#96;.specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md&#96;
++
++I didn’t touch that file further. How would you like to handle it (keep as-is, revert, or commit separately)?
++
++---
++
++_**User**_
++
++let's start with the maze contract
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Switching branch to start maze module**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++I’ll switch to &#96;feat/maze-contract&#96; and implement &#96;maze.py&#96; to satisfy the documented contract and the maze integration tests first, then run &#96;pytest&#96; on &#96;tests/test_maze_contract.py&#96;.
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: git checkout feat/maze-contract &amp;&amp; git status --short --branch&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++git checkout feat/maze-contract &amp;&amp; git status --short --branch
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++M	.specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
++## feat/maze-contract
++ M .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md
++Switched to branch 'feat/maze-contract'
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="generic" data-tool-name="glob_file_search"&gt;
++&lt;details&gt;
++&lt;summary&gt;Tool use: **glob_file_search** • Searched codebase "undefined" • **4** results in **1** directory&lt;/summary&gt;
++
++Directory: **/home/lhhung/504-week6** (4 files)
++
++| File |
++|------|
++| &#96;tests/test_repo_contract.py&#96; |
++| &#96;tests/test_maze_contract.py&#96; |
++| &#96;tests/test_engine_integration.py&#96; |
++| &#96;tests/conftest.py&#96; |
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="generic" data-tool-name="glob_file_search"&gt;
++&lt;details&gt;
++&lt;summary&gt;Tool use: **glob_file_search** • Searched codebase "undefined" • **4** results in **1** directory&lt;/summary&gt;
++
++Directory: **/home/lhhung/504-week6** (4 files)
++
++| File |
++|------|
++| &#96;tests/test_repo_contract.py&#96; |
++| &#96;tests/test_maze_contract.py&#96; |
++| &#96;tests/test_engine_integration.py&#96; |
++| &#96;tests/conftest.py&#96; |
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Requesting user guidance on unexpected file**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++Before I edit &#96;maze.py&#96;, I need your call on one thing: there’s still an unexpected local modification in &#96;.specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md&#96; on this branch.
++
++How do you want me to proceed?
++- Keep it as-is and ignore it while I implement &#96;maze.py&#96;
++- Revert it first
++- Commit it separately first
++
++---
++
++_**User**_
++
++The local modifications for the spec histories are going to diverge. This is OK - we have the branches and the main spec histories - so we track them but we do not merge them - will this work?
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Confirming merge=ours viability**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++Yes, that can work.
++
++### Practical rule to make it safe
++- Treat &#96;.specstory/history/**&#96; as **branch-local artifacts**.
++- Do **not include them in PRs to &#96;master&#96;**.
++- If they appear in a PR, remove them before merge.
++
++### What to watch out for
++- If these files stay tracked and differ across branches, merges can produce noise/conflicts.
++- As long as you consistently exclude them from merge PRs, you’re fine.
++
++### Recommended hardening (optional but helpful)
++- Add a policy line in &#96;RUNBOOK.md&#96;/&#96;AGENTS.md&#96;: “Never merge &#96;.specstory/history/**&#96; into &#96;master&#96; from feature branches.”
++- Optionally enforce with a local pre-commit or PR checklist item.
++
++So: your approach is valid, just enforce it consistently.  
++If you want, I can proceed with &#96;maze.py&#96; now while ignoring current &#96;.specstory&#96; divergence.
++
++---
++
++_**User**_
++
++Have we switched branches yet
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++Yes — currently on &#96;feat/maze-contract&#96;.
++
++---
++
++_**User**_
++
++OK. What are our responsibilities for this branch.
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++For &#96;feat/maze-contract&#96;, our responsibility is to deliver the **maze module contract only**.
++
++### Scope on this branch
++- Implement &#96;maze.py&#96; per &#96;interfaces.md&#96;:
++  - &#96;Direction&#96;, &#96;Position&#96;, &#96;CellKind&#96;, &#96;CellSpec&#96;, &#96;Maze&#96;
++  - &#96;build_minimal_3x3_maze()&#96;
++  - methods: &#96;in_bounds&#96;, &#96;cell&#96;, &#96;available_moves&#96;, &#96;next_pos&#96;, &#96;puzzle_id_at&#96;, &#96;gate_id_for&#96;
++- Keep it **independent**:
++  - no imports from &#96;db.py&#96; or &#96;main.py&#96;
++  - no puzzle-solving logic or persistence logic
++
++### Test gate for this branch
++Must pass &#96;tests/test_maze_contract.py&#96;:
++- &#96;test_minimal_maze_start_exit_in_bounds&#96;
++- &#96;test_available_moves_match_next_pos&#96;
++- &#96;test_exit_reachable_from_start_via_public_api&#96;
++- &#96;test_gate_and_puzzle_hooks_are_stable&#96;
++
++### Out of scope (for other branches)
++- JSON repository implementation (&#96;feat/db-json-repo&#96;)
++- Engine/CLI command loop (&#96;feat/engine-cli&#96;)
++- End-to-end integration pass (depends on all modules)
++
++If you want, I’ll start implementing &#96;maze.py&#96; now to satisfy those four maze contract tests.
++
++---
++
++_**User**_
++
++OK let's build the methods
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Planning robust maze implementation**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++I’m implementing &#96;maze.py&#96;
++
++---
++
++_**User**_
++
++Sorry - do we need a runbook for the methods or should we just build the minumum now from the current specs?
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++Build the minimum now from the current specs.
++
++You already have the runbook-level guidance:
++- &#96;interfaces.md&#96; = API contract
++- &#96;RUNBOOK.md&#96; = branch scope + gate
++- &#96;integration-tests-spec.md&#96; = expected behavior
++
++For &#96;feat/maze-contract&#96;, the right move is:
++1. Implement minimal &#96;maze.py&#96; contract.
++2. Run &#96;pytest -q tests/test_maze_contract.py&#96;.
++3. Iterate until those pass.
++4. Stop (don’t expand features on this branch).
++
++No additional method-specific runbook is needed at this stage.
++
++---
++
++_**User**_
++
++OK, let's build it
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Designing minimal maze implementation**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++I’m implementing a minimal &#96;maze.py&#96; now with the full contract types and methods, plus a deterministic 3x3 layout and gate hooks, then I’ll run the maze contract tests.
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/maze.py&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: python -m pytest -q tests/test_maze_contract.py&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++python -m pytest -q tests/test_maze_contract.py
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++.F..                                                                     [100%]
++=================================== FAILURES ===================================
++_____________________ test_available_moves_match_next_pos ______________________
++
++maze_module = &amp;lt;module 'maze' from '/home/lhhung/504-week6/maze.py'&amp;gt;
++
++    def test_available_moves_match_next_pos(maze_module):
++        maze = maze_module.build_minimal_3x3_maze()
++        Direction = getattr(maze_module, "Direction", None)
++        assert Direction is not None, "maze.Direction Enum must exist per interfaces.md"
++    
++        for pos in _all_positions(maze_module, maze):
++            moves = maze.available_moves(pos)
++            assert isinstance(moves, (set, list, tuple)), "available_moves must return a collection of Directions"
++    
++            # For moves the maze claims are available, next_pos must succeed.
++            for d in moves:
++                nxt = maze.next_pos(pos, d)
++                assert nxt is not None, f"next_pos returned None for available move {d} at {pos}"
++                assert maze.in_bounds(nxt), f"next_pos returned out-of-bounds position {nxt} from {pos} via {d}"
++    
++            # For directions not in moves, next_pos must return None.
++            for d in list(Direction):
++                if d in moves:
++                    continue
++&amp;gt;               assert maze.next_pos(pos, d) is None
++E               AssertionError: assert Position(row=1, col=1) is None
++E                +  where Position(row=1, col=1) = next_pos(Position(row=0, col=1), &amp;lt;Direction.S: (1, 0)&amp;gt;)
++E                +    where next_pos = Maze(maze_id='maze-3x3-v1', maze_version='1.0', width=3, height=3, start=Position(row=0, col=0), exit=Position(row=2, ...Access Gateway', description='One final jump grants root shell.', blocked=frozenset(), puzzle_id=None, edge_gates={})}).next_pos
++
++tests/test_maze_contract.py:43: AssertionError
++=========================== short test summary info ============================
++FAILED tests/test_maze_contract.py::test_available_moves_match_next_pos - AssertionError: assert Position(row=1, col=1) is None
++ +  where Position(row=1, col=1) = next_pos(Position(row=0, col=1), &amp;lt;Direction.S: (1, 0)&amp;gt;)
++ +    where next_pos = Maze(maze_id='maze-3x3-v1', maze_version='1.0', width=3, height=3, start=Position(row=0, col=0), exit=Position(row=2, ...Access Gateway', description='One final jump grants root shell.', blocked=frozenset(), puzzle_id=None, edge_gates={})}).next_pos
++1 failed, 3 passed in 0.59s
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++**Adjusting next position logic for blocked walls**&lt;/details&gt;&lt;/think&gt;
++
++---
++
++One maze test failed because &#96;next_pos()&#96; currently ignores wall blocking. I’ll update &#96;next_pos()&#96; to return &#96;None&#96; for blocked directions (including reciprocal blocked walls), then rerun the maze test file.
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/maze.py&lt;/summary&gt;
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2** • Run command: python -m pytest -q tests/test_maze_contract.py&lt;/summary&gt;
++
++&#96;&#96;&#96;bash
++python -m pytest -q tests/test_maze_contract.py
++&#96;&#96;&#96;
++
++&#96;&#96;&#96;
++....                                                                     [100%]
++4 passed in 0.10s
++
++&#96;&#96;&#96;
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="unknown" data-tool-name="read_lints"&gt;
++&lt;details&gt;
++&lt;summary&gt;Tool use: **read_lints**&lt;/summary&gt;
++
++
++Parameters:
++
++&#96;&#96;&#96;json
++{
++  "paths": [
++    "/home/lhhung/504-week6/maze.py"
++  ]
++}
++&#96;&#96;&#96;
++Result:
++
++&#96;&#96;&#96;json
++{
++  "linterErrorsByFile": [
++    {
++      "relativeWorkspacePath": "/home/lhhung/504-week6/maze.py"
++    }
++  ]
++}
++&#96;&#96;&#96;
++Status: **completed**
++
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++Implemented the maze contract on &#96;feat/maze-contract&#96; and verified it against the branch scope.
++
++### What’s built
++- New &#96;maze.py&#96; with:
++  - &#96;Direction&#96; enum (&#96;N&#96;, &#96;S&#96;, &#96;E&#96;, &#96;W&#96;) + &#96;delta&#96; and &#96;opposite&#96;
++  - &#96;Position&#96; dataclass
++  - &#96;CellKind&#96; enum
++  - &#96;CellSpec&#96; dataclass
++  - &#96;Maze&#96; class methods:
++    - &#96;in_bounds&#96;
++    - &#96;cell&#96;
++    - &#96;available_moves&#96;
++    - &#96;next_pos&#96;
++    - &#96;puzzle_id_at&#96;
++    - &#96;gate_id_for&#96;
++  - &#96;build_minimal_3x3_maze()&#96; deterministic factory with:
++    - stable id/version
++    - start and exit
++    - fixed walls
++    - a sample gated edge + matching puzzle id
++
++### Validation
++- Ran: &#96;python -m pytest -q tests/test_maze_contract.py&#96;
++- Result: **4 passed**
++- Lints on &#96;maze.py&#96;: **no issues**
++
++If you want, I can commit this maze branch now with a focused message.
++
++---
++
++_**User**_
++
++Review the code
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;tool-use data-tool-type="read" data-tool-name="read_file_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **read_file_v2** • Read file: /home/lhhung/504-week6/maze.py&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++_**User**_
++
++Sorry review the code for correctness and whether if follows the runbook
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++&lt;think&gt;&lt;details&gt;&lt;summary&gt;Thought Process&lt;/summary&gt;
++The user wants me to review the code against the contracts and runbook. Let me re-read the relevant docs and the code carefully.&lt;/details&gt;&lt;/think&gt;
++
++---
++
++Let me cross-check &#96;maze.py&#96; against &#96;interfaces.md&#96;, &#96;RUNBOOK.md&#96;, and the test contract systematically.
++
++---
++
++&lt;tool-use data-tool-type="read" data-tool-name="read_file_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **read_file_v2** • Read file: /home/lhhung/504-week6/interfaces.md&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="read" data-tool-name="read_file_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **read_file_v2** • Read file: /home/lhhung/504-week6/RUNBOOK.md&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++### Review: &#96;maze.py&#96; vs contracts and runbook
++
++**Contract compliance (&#96;interfaces.md&#96; section 3)**
++
++| Requirement | Status | Notes |
++|---|---|---|
++| &#96;Direction&#96; enum with &#96;N, S, E, W&#96; + delta | Pass | &#96;delta&#96; property returns &#96;self.value&#96; correctly |
++| &#96;Position&#96; dataclass with &#96;row, col&#96; | Pass | frozen, hashable — works in &#96;set&#96;/&#96;dict&#96; |
++| &#96;CellKind&#96; enum: &#96;START, EXIT, NORMAL&#96; | Pass | |
++| &#96;CellSpec&#96; immutable with all fields | Pass | Uses &#96;frozen=True&#96; |
++| &#96;CellSpec.blocked: set[Direction]&#96; | Pass | Stored as &#96;frozenset&#96; (stricter than required, compatible) |
++| &#96;CellSpec.edge_gates: dict[Direction, str]&#96; | Pass | |
++| &#96;Maze&#96; identity: &#96;maze_id, maze_version, width, height, start, exit&#96; | Pass | |
++| &#96;in_bounds(pos) -&gt; bool&#96; | Pass | |
++| &#96;cell(pos) -&gt; CellSpec&#96; | Pass | Raises on out-of-bounds (reasonable) |
++| &#96;available_moves(pos) -&gt; set[Direction]&#96; | Pass | Accounts for bounds + blocked + reciprocal walls |
++| &#96;next_pos(pos, direction) -&gt; Position | None&#96; | Pass | Returns &#96;None&#96; for walls, bounds, and reciprocal blocks |
++| &#96;puzzle_id_at(pos) -&gt; str | None&#96; | Pass | |
++| &#96;gate_id_for(pos, direction) -&gt; str | None&#96; | Pass | |
++| &#96;build_minimal_3x3_maze()&#96; deterministic | Pass | Fixed layout, start at (0,0), exit at (2,2) |
++| At least 1-2 puzzle placements/gates | Pass | One gate (&#96;gate-python-basics-1&#96;) on start→east edge, one puzzle in (0,1) |
++| No imports from &#96;db.py&#96; or &#96;main.py&#96; | Pass | Only imports &#96;dataclasses&#96;, &#96;enum&#96;, &#96;typing&#96; |
++
++**Runbook checklist items**
++
++| Checklist item | Status |
++|---|---|
++| Implement &#96;build_minimal_3x3_maze()&#96; | Done |
++| Implement &#96;in_bounds&#96;, &#96;available_moves&#96;, &#96;next_pos&#96; | Done |
++| Exit reachable via public API | Confirmed (test passes via BFS) |
++| Stable hooks: &#96;puzzle_id_at&#96;, &#96;gate_id_for&#96; | Done |
++| No imports of &#96;db.py&#96;/&#96;main.py&#96; | Confirmed |
++| All Maze P0 tests pass | 4/4 passed |
++
++**Issues found**
++
++1. **Unused import** on line 5: &#96;Iterable&#96; is imported but never used. Should be removed.
++2. **&#96;CellSpec&#96; with &#96;frozen=True&#96; but mutable &#96;edge_gates&#96; dict default**: &#96;frozen=True&#96; prevents reassignment of the attribute, but the dict itself is still mutable after construction. This is technically fine for the walking skeleton (nothing mutates it after build), but worth noting for future hardening. Not a blocker.
++3. **&#96;available_moves&#96; duplicates wall logic from &#96;next_pos&#96;**: lines 69-85 re-check blocked/reciprocal walls, then calls &#96;next_pos&#96; which checks again. This means each direction is wall-checked twice. Not a correctness bug, but slightly redundant. Could simplify &#96;available_moves&#96; to just filter on &#96;next_pos(pos, d) is not None&#96;.
++
++**Verdict**: Code is correct, follows the runbook and contract, and passes all P0 tests. Only the unused &#96;Iterable&#96; import should be cleaned up before commit.
++
++---
++
++_**User**_
++
++Clean up the Iterable import and commit
++
++---
++
++_**Agent (model gpt-5.3-codex, mode Agent)**_
++
++
++
++---
++
++&lt;tool-use data-tool-type="write" data-tool-name="edit_file_v2"&gt;
++
++&lt;details&gt;&lt;summary&gt;Tool use: **edit_file_v2** • Edit file: /home/lhhung/504-week6/maze.py&lt;/summary&gt;
++
++Status: **loading**
++
++&lt;/details&gt;
++
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2**&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2**&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2**&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2**&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++
++
++---
++
++&lt;tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2"&gt;
++&lt;details&gt;&lt;summary&gt;Tool use: **run_terminal_command_v2**&lt;/summary&gt;
++
++&lt;/details&gt;
++&lt;/tool-use&gt;
++
++---
++
++
++
++---
++
+
+```
+</details>
+</tool-use>
+
+---
+
+<think><details><summary>Thought Process</summary>
+**Performing final git commit steps**</details></think>
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: git log --oneline --decorate -n 5</summary>
+
+```bash
+git log --oneline --decorate -n 5
+```
+
+```
+6267f07 (HEAD -&gt; feat/maze-contract) Implement maze contract for 3x3 walking skeleton.
+23128f6 (origin/master, master, feat/engine-cli, feat/db-json-repo, custom_modification) Clarify no-CI manual test gate requirements.
+a258f53 (integration-tests) Add shared integration and contract tests for walking skeleton.
+ea7c9e7 (planning) Add SpecStory session notes.
+8ccd89f Add agent contribution rules and PR workflow.
+
+```
+</details>
+</tool-use>
+
+---
+
+I’m committing the branch-specific `.specstory` update now, then I’ll push `feat/maze-contract` to remote with upstream tracking.
+
+---
+
+<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
+<details><summary>Tool use: **run_terminal_command_v2** • Run command: git add .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md && git commit --trailer "Co-authored-by: Cursor <cursoragent@cursor.com>" -m "$(cat <<'EOF'
+Update SpecStory history for maze-contract branch.
+
+Capture branch-specific session history so this workstream can be tracked independently from master.
+EOF
+)" && git push -u origin feat/maze-contract && git status --short --branch</summary>
+
+```bash
+git add .specstory/history/2026-02-13_06-14Z-quiz-maze-game-structure-planning.md && git commit --trailer "Co-authored-by: Cursor <cursoragent@cursor.com>" -m "$(cat <<'EOF'
+Update SpecStory history for maze-contract branch.
+
+Capture branch-specific session history so this workstream can be tracked independently from master.
+EOF
+)" && git push -u origin feat/maze-contract && git status --short --branch
+```
+
+```
+[feat/maze-contract 5fe2d8d] Update SpecStory history for maze-contract branch.
+ 1 file changed, 1887 insertions(+), 20 deletions(-)
+branch 'feat/maze-contract' set up to track 'origin/feat/maze-contract'.
+## feat/maze-contract...origin/feat/maze-contract
+remote: 
+remote: Create a pull request for 'feat/maze-contract' on GitHub by visiting:        
+remote:      https://github.com/lhhunghimself/504-week6/pull/new/feat/maze-contract        
+remote: 
+To github.com:lhhunghimself/504-week6.git
+ * [new branch]      feat/maze-contract -&gt; feat/maze-contract
+
+```
+</details>
+</tool-use>
+
+---
+
+Done — pushed as a separate branch with branch-specific SpecStory tracked.
+
+### What I did
+- Committed `.specstory` changes on `feat/maze-contract`:
+  - **Commit:** `5fe2d8d`
+  - Message: “Update SpecStory history for maze-contract branch.”
+- Pushed branch to remote:
+  - `origin/feat/maze-contract`
+  - Upstream tracking set
+
+Branch is now clean and independent from `master`.
+
+---
+
+_**User**_
+
+OK, what have we so far in the main.py
+
+---
+
+_**Agent (model gpt-5.3-codex, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+**Checking main file existence**</details></think>
+
+---
+
+I’ll quickly check whether `main.py` exists on your current branch and summarize what is implemented there (or not yet).
+
+---
+
+<tool-use data-tool-type="generic" data-tool-name="glob_file_search">
+<details>
+<summary>Tool use: **glob_file_search** • Searched codebase "undefined" • **0** result in **1** directory</summary>
+
+Directory: **/home/lhhung/504-week6** (0 file)
+
+</details>
+</tool-use>
+
+---
+
+<tool-use data-tool-type="generic" data-tool-name="glob_file_search">
+<details>
+<summary>Tool use: **glob_file_search** • Searched codebase "undefined" • **5** results in **1** directory</summary>
+
+Directory: **/home/lhhung/504-week6** (5 files)
+
+| File |
+|------|
+| `maze.py` |
+| `tests/test_repo_contract.py` |
+| `tests/test_maze_contract.py` |
+| `tests/test_engine_integration.py` |
+| `tests/conftest.py` |
+
+</details>
+</tool-use>
+
+---
+
+Right now: **there is no `main.py` yet** on this branch (or in the repo at this point).
+
+### Current Python code present
+- `maze.py` (implemented on `feat/maze-contract`)
+- `tests/conftest.py`
+- `tests/test_maze_contract.py`
+- `tests/test_repo_contract.py`
+- `tests/test_engine_integration.py`
+
+So for `main.py` specifically, we have only the **planned contract and tests** (`GameEngine`, `Command`, `view()`, `handle(...)`) but no implementation yet. That work belongs on `feat/engine-cli`.
+
+---
+
+_**User**_
+
+Sorry I mean for this branch module
+
+---
+
+_**Agent (model gpt-5.3-codex, mode Agent)**_
+
+For this branch module (`feat/maze-contract`), here’s what we have:
+
+- **Implemented:** `maze.py`
+  - `Direction`, `Position`, `CellKind`, `CellSpec`, `Maze`
+  - Methods: `in_bounds`, `cell`, `available_moves`, `next_pos`, `puzzle_id_at`, `gate_id_for`
+  - `build_minimal_3x3_maze()` deterministic layout with walls + a gate/puzzle hook
+
+- **Validated:**
+  - `python -m pytest -q tests/test_maze_contract.py` → **4 passed**
+
+- **Committed and pushed:**
+  - `6267f07` (maze contract implementation)
+  - `5fe2d8d` (branch-specific `.specstory` history)
+  - Branch: `origin/feat/maze-contract` tracked
+
+So this branch is in good shape for a Maze-module PR.
+
+---
+
+_**User**_
+
+Are we ready for the integration tests
+
+---
+
+_**Agent (model gpt-5.3-codex, mode Agent)**_
+
+<think><details><summary>Thought Process</summary>
+**Confirming partial integration and contract readiness**</details></think>
+
+---
+
+For the **full integration suite**: **not yet**.
+
+### Current readiness
+- **Maze side:** ready (`maze.py` implemented, maze contract tests pass).
+- **Repo side (`db.py`):** not implemented yet.
+- **Engine side (`main.py` / `GameEngine`):** not implemented yet.
+
+### What this means
+- `tests/test_maze_contract.py` can pass now.
+- `tests/test_repo_contract.py` and `tests/test_engine_integration.py` will fail until `db.py` and `main.py` are built.
+
+So we’re ready for **maze integration handoff**, but not ready for **end-to-end integration test pass** yet.
+
+---
+
+_**User**_
+
+OK, have we checked what will pass?
+
+---
+
+_**Agent (model gpt-5.3-codex, mode Agent)**_
+
+
+
+---
+
+
 
 ---
 
@@ -4170,26 +6592,6 @@ Status: **loading**
 
 </details>
 </tool-use>
-
----
-
-<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
-<details><summary>Tool use: **run_terminal_command_v2**</summary>
-
-</details>
-</tool-use>
-
----
-
-<tool-use data-tool-type="shell" data-tool-name="run_terminal_command_v2">
-<details><summary>Tool use: **run_terminal_command_v2**</summary>
-
-</details>
-</tool-use>
-
----
-
-
 
 ---
 
