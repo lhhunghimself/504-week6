@@ -220,3 +220,208 @@ def _elapsed_seconds(started_at: str | None) -> int:
     now = datetime.now(timezone.utc)
     return max(0, int((now - dt).total_seconds()))
 
+
+# ---------------------------------------------------------------------------
+# CLI adapter
+# ---------------------------------------------------------------------------
+
+_HELP_TEXT = """\
+Commands:
+  n / s / e / w   — move in that direction
+  go <dir>        — move (north, south, east, west, or N/S/E/W)
+  look            — re-describe current cell
+  map             — show a simple maze map
+  answer <text>   — answer a pending puzzle
+  save            — save progress
+  scores          — show top scores
+  help            — show this help
+  quit            — exit the game
+"""
+
+
+def _render_map(maze: Any, pos: Position) -> str:
+    """Render a simple text map of the maze with the player marked."""
+    lines: list[str] = []
+    for r in range(maze.height):
+        row_cells: list[str] = []
+        for c in range(maze.width):
+            p = Position(row=r, col=c)
+            cell = maze.cell(p)
+            if p == pos:
+                icon = " @ "
+            elif p == maze.start:
+                icon = " S "
+            elif p == maze.exit:
+                icon = " X "
+            elif cell.puzzle_id is not None:
+                icon = " ? "
+            else:
+                icon = " . "
+            row_cells.append(icon)
+
+        # Horizontal connectors
+        connected: list[str] = []
+        for c, token in enumerate(row_cells):
+            connected.append(token)
+            if c < len(row_cells) - 1:
+                p = Position(row=r, col=c)
+                if Direction.E in maze.available_moves(p):
+                    connected.append("--")
+                else:
+                    connected.append("  ")
+        lines.append("".join(connected))
+
+        # Vertical connectors
+        if r < maze.height - 1:
+            vert: list[str] = []
+            for c in range(maze.width):
+                p = Position(row=r, col=c)
+                if Direction.S in maze.available_moves(p):
+                    vert.append(" | ")
+                else:
+                    vert.append("   ")
+                if c < maze.width - 1:
+                    vert.append("  ")
+            lines.append("".join(vert))
+    return "\n".join(lines)
+
+
+def _render_view(view: GameView, maze: Any, pos: Position, messages: list[str]) -> str:
+    """Format engine output for terminal display."""
+    parts: list[str] = []
+
+    parts.append(f"\n--- {view.cell_title} ---")
+    parts.append(view.cell_description)
+    parts.append(f"Position: ({view.pos['row']}, {view.pos['col']})  |  Moves: {view.move_count}")
+    parts.append(f"Exits: {', '.join(view.available_moves)}")
+
+    if view.pending_puzzle:
+        parts.append("")
+        parts.append(f">> PUZZLE: {view.pending_puzzle['title']}")
+        parts.append(view.pending_puzzle["prompt"])
+        parts.append("  Use: answer <your answer>")
+
+    if view.is_complete:
+        parts.append("")
+        parts.append("*** ACCESS GRANTED — You have reached root. Game complete! ***")
+
+    for msg in messages:
+        parts.append(f"  [{msg}]")
+
+    return "\n".join(parts)
+
+
+def _parse_input(raw: str) -> Command:
+    """Parse raw CLI input into a Command."""
+    tokens = raw.strip().split()
+    if not tokens:
+        return Command(verb="", args=[])
+    return Command(verb=tokens[0], args=tokens[1:])
+
+
+def cli_main() -> None:
+    """Interactive CLI entry point for the quiz maze game."""
+    from pathlib import Path
+
+    from db import JsonGameRepository
+    from maze import build_minimal_3x3_maze
+    from puzzles import PuzzleRegistry
+
+    print("=" * 50)
+    print("  HACK THE MAZE  —  A Python Puzzle Adventure")
+    print("=" * 50)
+    print()
+
+    # --- Setup ---
+    save_path = Path("game_save.json")
+    repo = JsonGameRepository(save_path)
+    maze = build_minimal_3x3_maze()
+    puzzles = PuzzleRegistry()
+
+    handle = input("Enter your hacker handle: ").strip() or "anonymous"
+    player = repo.get_or_create_player(handle)
+    player_id = player["id"] if isinstance(player, dict) else player.id
+
+    initial_state = {
+        "pos": {"row": maze.start.row, "col": maze.start.col},
+        "move_count": 0,
+        "solved_gates": [],
+        "started_at": _utc_now_iso(),
+    }
+    game = repo.create_game(
+        player_id=player_id,
+        maze_id=maze.maze_id,
+        maze_version=maze.maze_version,
+        initial_state=initial_state,
+    )
+    game_id = game["id"] if isinstance(game, dict) else game.id
+
+    engine = GameEngine(
+        maze=maze,
+        repo=repo,
+        puzzles=puzzles,
+        player_id=player_id,
+        game_id=game_id,
+    )
+
+    # --- Initial view ---
+    view = engine.view()
+    print(_render_view(view, maze, engine._pos, []))
+    print()
+    print("Type 'help' for commands.")
+    print()
+
+    # --- Game loop ---
+    while True:
+        try:
+            raw = input("> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nSession terminated. Progress auto-saved.")
+            engine.handle(Command(verb="save", args=[]))
+            break
+
+        if not raw:
+            continue
+
+        cmd = _parse_input(raw)
+        verb = cmd.verb.lower()
+
+        if verb == "quit":
+            engine.handle(Command(verb="save", args=[]))
+            print("Progress saved. Until next time, hacker.")
+            break
+
+        if verb == "help":
+            print(_HELP_TEXT)
+            continue
+
+        if verb == "scores":
+            scores = repo.top_scores(maze_id=maze.maze_id, limit=5)
+            if not scores:
+                print("  No scores recorded yet.")
+            else:
+                print("  -- Top Scores --")
+                for i, s in enumerate(scores, 1):
+                    m = s.get("metrics", {}) if isinstance(s, dict) else s.metrics
+                    print(f"  {i}. {m.get('moves', '?')} moves, {m.get('elapsed_seconds', '?')}s")
+            print()
+            continue
+
+        if verb == "map":
+            print()
+            print(_render_map(maze, engine._pos))
+            print()
+            continue
+
+        out = engine.handle(cmd)
+        print(_render_view(out.view, maze, engine._pos, out.messages))
+        print()
+
+        if out.view.is_complete:
+            print("Final score recorded. Type 'scores' to see the leaderboard, or 'quit' to exit.")
+            print()
+
+
+if __name__ == "__main__":
+    cli_main()
+

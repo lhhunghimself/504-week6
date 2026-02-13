@@ -155,3 +155,63 @@ def test_invalid_command_returns_error_message(maze_module, repo, puzzle_registr
     assert out.messages
     assert after.pos == before.pos
     assert after.move_count == before.move_count
+
+
+def test_save_load_round_trip_preserves_state(maze_module, repo, puzzle_registry):
+    """Create engine, make moves, save, then create a NEW engine from same
+    game_id and verify state was reconstructed correctly."""
+    main, maze, engine = _build_engine(maze_module, repo, puzzle_registry)
+    d = _first_ungated_direction(maze)
+    engine.handle(main.Command(verb="go", args=[_dir_token(d)]))
+    engine.handle(main.Command(verb="save", args=[]))
+
+    saved_view = engine.view()
+
+    # Build a brand-new engine from the same persisted game
+    engine2 = main.GameEngine(
+        maze=maze,
+        repo=repo,
+        puzzles=puzzle_registry,
+        player_id=engine.player_id,
+        game_id=engine.game_id,
+    )
+    restored_view = engine2.view()
+
+    assert restored_view.pos == saved_view.pos
+    assert restored_view.move_count == saved_view.move_count
+    assert restored_view.is_complete == saved_view.is_complete
+
+
+def test_short_form_direction_verbs(maze_module, repo, puzzle_registry):
+    """Bare n/s/e/w verbs should work like 'go N/S/E/W'."""
+    main, maze, engine = _build_engine(maze_module, repo, puzzle_registry)
+    d = _first_ungated_direction(maze)
+    token = _dir_token(d).lower()  # e.g. "s"
+    before = engine.view().pos
+    out = engine.handle(main.Command(verb=token, args=[]))
+    assert out.view.pos != before
+    assert out.view.move_count == 1
+
+
+def test_look_command_returns_current_view(maze_module, repo, puzzle_registry):
+    main, _, engine = _build_engine(maze_module, repo, puzzle_registry)
+    baseline = engine.view()
+    out = engine.handle(main.Command(verb="look", args=[]))
+    assert out.view.pos == baseline.pos
+    assert out.view.cell_title == baseline.cell_title
+    assert out.did_persist is False
+
+
+def test_map_command_returns_current_view(maze_module, repo, puzzle_registry):
+    main, _, engine = _build_engine(maze_module, repo, puzzle_registry)
+    baseline = engine.view()
+    out = engine.handle(main.Command(verb="map", args=[]))
+    assert out.view.pos == baseline.pos
+    assert out.did_persist is False
+
+
+def test_answer_without_pending_puzzle(maze_module, repo, puzzle_registry):
+    main, _, engine = _build_engine(maze_module, repo, puzzle_registry)
+    out = engine.handle(main.Command(verb="answer", args=["something"]))
+    assert "No pending puzzle" in out.messages[0]
+    assert out.did_persist is False
