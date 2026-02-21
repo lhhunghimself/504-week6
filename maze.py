@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict
@@ -175,6 +176,109 @@ def build_minimal_3x3_maze() -> Maze:
 
     return Maze(
         maze_id="maze-3x3-v1",
+        maze_version="1.0",
+        width=width,
+        height=height,
+        start=start,
+        exit=exit_pos,
+        cells=cells,
+    )
+
+
+def build_square_maze(size: int, seed: int) -> Maze:
+    """Procedurally generate an NxN maze using seeded recursive backtracker."""
+    rng = random.Random(seed)
+    width = height = size
+    start = Position(0, 0)
+    exit_pos = Position(size - 1, size - 1)
+
+    # Grid: each cell starts with all 4 walls (all directions blocked)
+    grid = _make_grid(width=width, height=height)
+    for pos in grid:
+        grid[pos]["blocked"] = {Direction.N, Direction.S, Direction.E, Direction.W}
+
+    # Recursive backtracker: carve passages
+    visited: set[Position] = set()
+
+    def carve(pos: Position) -> None:
+        visited.add(pos)
+        neighbors: list[tuple[Position, Direction]] = []
+        for d in Direction:
+            dr, dc = d.delta
+            nr, nc = pos.row + dr, pos.col + dc
+            if 0 <= nr < height and 0 <= nc < width:
+                npos = Position(nr, nc)
+                if npos not in visited:
+                    neighbors.append((npos, d))
+        rng.shuffle(neighbors)
+        for npos, d in neighbors:
+            if npos not in visited:
+                # Remove wall between pos and npos
+                grid[pos]["blocked"].discard(d)
+                grid[npos]["blocked"].discard(d.opposite)
+                carve(npos)
+
+    carve(start)
+
+    # Mark start and exit
+    grid[start]["kind"] = CellKind.START
+    grid[start]["title"] = "Ingress Port"
+    grid[start]["description"] = "You jack into the internal network."
+
+    grid[exit_pos]["kind"] = CellKind.EXIT
+    grid[exit_pos]["title"] = "Root Access Gateway"
+    grid[exit_pos]["description"] = "One final jump grants root shell."
+
+    # Find path from start to exit (BFS) to place gate on an edge along the path
+    path_edges: list[tuple[Position, Direction]] = []
+    q: list[Position] = [start]
+    parent: Dict[Position, tuple[Position, Direction] | None] = {start: None}
+    while q:
+        cur = q.pop(0)
+        if cur == exit_pos:
+            break
+        for d in Direction:
+            if d in grid[cur]["blocked"]:
+                continue
+            dr, dc = d.delta
+            npos = Position(cur.row + dr, cur.col + dc)
+            if npos not in parent:
+                parent[npos] = (cur, d)
+                q.append(npos)
+
+    # Reconstruct path edges
+    cur = exit_pos
+    while parent[cur] is not None:
+        prev, d = parent[cur]
+        path_edges.append((prev, d))
+        cur = prev
+
+    # Place at least one gate on a random edge along the path
+    if path_edges:
+        gate_pos, gate_dir = path_edges[rng.randint(0, len(path_edges) - 1)]
+        gate_id = f"gate-dynamic-{seed}"
+        grid[gate_pos]["edge_gates"][gate_dir] = gate_id
+        # Puzzle in the cell we're moving to
+        dr, dc = gate_dir.delta
+        next_pos = Position(gate_pos.row + dr, gate_pos.col + dc)
+        grid[next_pos]["puzzle_id"] = gate_id
+        grid[next_pos]["title"] = "Firewall Lattice"
+        grid[next_pos]["description"] = "A challenge guards this route."
+
+    cells: Dict[Position, CellSpec] = {}
+    for pos, item in grid.items():
+        cells[pos] = CellSpec(
+            pos=pos,
+            kind=item["kind"],
+            title=item["title"],
+            description=item["description"],
+            blocked=frozenset(item["blocked"]),
+            puzzle_id=item["puzzle_id"],
+            edge_gates=dict(item["edge_gates"]),
+        )
+
+    return Maze(
+        maze_id=f"maze-{size}x{size}-v1",
         maze_version="1.0",
         width=width,
         height=height,
