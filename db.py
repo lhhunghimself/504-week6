@@ -257,13 +257,6 @@ class SqliteGameRepository:
         self.engine = create_engine(url, connect_args={"check_same_thread": False})
         SQLModel.metadata.create_all(self.engine)
 
-    def _to_dict(self, obj: Any) -> dict[str, Any]:
-        if isinstance(obj, dict):
-            return obj
-        if hasattr(obj, "model_dump"):
-            return obj.model_dump()
-        return _as_record(obj)
-
     # Player ops
     def get_player(self, player_id: str) -> dict[str, Any] | None:
         with Session(self.engine) as session:

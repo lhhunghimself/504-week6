@@ -30,6 +30,7 @@ class GameView:
     pending_puzzle: dict[str, str] | None
     is_complete: bool
     move_count: int = 0
+    map_text: str | None = None
 
 
 @dataclass
