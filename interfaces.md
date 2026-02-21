@@ -80,15 +80,26 @@ A concrete `Maze` class should expose at least:
   - `gate_id_for(pos: Position, direction: Direction) -> str | None`
     - Returns a `gate_id` required to move along that edge, else `None`
 
-### 3.3 Factory for the walking skeleton
+### 3.3 Factories
 
 - `build_minimal_3x3_maze() -> Maze`
   - Deterministic hand-authored 3x3 layout
   - Must define `start`, `exit`, walls (`blocked`), and at least 1-2 puzzle placements/gates
 
+- `build_square_maze(size: int, seed: int) -> Maze`
+  - Procedurally generates an N×N maze using seeded randomness
+  - Uses `random.Random(seed)` for deterministic generation (e.g., recursive backtracker)
+  - Start at `Position(0, 0)`, exit at `Position(size-1, size-1)`
+  - Must place at least one gate on an edge along a reachable path
+  - Returns a `Maze` with `maze_id` and `maze_version` appropriate for the size
+
+### 3.4 Fog of War (renderer responsibility)
+
+Fog-of-war visibility is handled by the engine/CLI renderer, not by `maze.py`. The maze stays purely topological. The renderer receives a `visited: set[Position]` and hides unvisited cells (e.g., as `###`) and the exit until discovered.
+
 ---
 
-## 4) `db.py` — Persistence Contract (Mock ORM, JSON-backed)
+## 4) `db.py` — Persistence Contract (JSON + SQLite via SQLModel)
 
 ### 4.1 Records (DTOs) returned to `main.py`
 
@@ -140,13 +151,38 @@ Notes:
 - IDs are strings (uuid recommended).
 - DB implementation should be safe against partial writes (write-then-rename strategy recommended later).
 
-### 4.3 JSON File Shape (implementation detail, but stable enough)
+### 4.3 JSON File Shape (JsonGameRepository implementation detail)
 
 Top-level JSON object:
 - `schema_version: int`
 - `players: { "<player_id>": PlayerRecord-as-dict }`
 - `games: { "<game_id>": GameRecord-as-dict }`
 - `scores: { "<score_id>": ScoreRecord-as-dict }`
+
+### 4.4 SQLite Backend (SqliteGameRepository)
+
+- `SqliteGameRepository` — same interface as `JsonGameRepository` but backed by SQLite via SQLModel
+- Uses SQLModel table classes for `players`, `games`, `scores`, and `questions`
+- All methods return plain dicts (or dict-like records) matching the existing contract
+
+- `open_repo(path: str | Path) -> GameRepository`
+  - If `path` suffix is `.db` → return `SqliteGameRepository(path)`
+  - Otherwise → return `JsonGameRepository(path)` (backward compatible)
+
+### 4.5 Question Bank (SQLite only)
+
+- `QuestionRecord` (table/model) fields:
+  - `id: str`
+  - `question_text: str`
+  - `correct_answer: str`
+  - `category: str` (optional grouping)
+  - `has_been_asked: bool`
+
+- New methods on repository (SqliteGameRepository; JsonGameRepository may stub or raise):
+  - `get_random_question(category: str | None = None) -> dict | None` — returns a random question where `has_been_asked` is `False`; returns `None` if all exhausted
+  - `mark_question_asked(question_id: str) -> None` — sets `has_been_asked = True`
+  - `seed_questions(questions: list[dict]) -> None` — bulk insert questions for initial population
+  - `reset_questions() -> None` — resets all `has_been_asked` to `False`
 
 ---
 
@@ -162,7 +198,7 @@ Minimum suggested persisted keys:
 - `solved_gates: list[str]` (or `solved_puzzles: list[str]`)
 - `started_at: str`
 - `ended_at: str | None`
-- (optional) `visited: list[{"row": int, "col": int}]`
+- `visited: list[{"row": int, "col": int}]` — cells the player has been to; used for fog-of-war rendering
 
 ### 5.2 Puzzle Contract (no UI assumptions)
 
@@ -189,9 +225,11 @@ Minimum:
     - `puzzles: PuzzleRegistry`
     - `player_id: str`
     - `game_id: str`
+    - (optional) `question_source` — repository with `get_random_question` / `mark_question_asked` for DB-backed questions at gates
   - Methods:
     - `view() -> GameView`
     - `handle(command: Command) -> GameOutput`
+  - When a player hits a gated door, engine may request an unused question from `question_source` (repo) via `get_random_question()`; falls back to `PuzzleRegistry` if none available. On correct answer, calls `mark_question_asked(question_id)`.
 
 - `Command` (parsed from UI)
   - `verb: str`
@@ -204,13 +242,22 @@ Minimum:
   - `available_moves: list[str]` (e.g. `["N","E"]`)
   - `pending_puzzle: {"puzzle_id": str, "title": str, "prompt": str} | None`
   - `is_complete: bool`
+  - (optional) `map_text: str | None` — pre-rendered fog-of-war ASCII map for display
 
 - `GameOutput`
   - `view: GameView`
   - `messages: list[str]` (UI can display however it wants)
   - `did_persist: bool` (optional)
 
-### 5.4 CLI command grammar (walking skeleton)
+### 5.4 CLI rendering (fog of war)
+
+- `_render_map(maze, pos, visited: set[Position], reveal_all: bool = True) -> str`
+  - Renders ASCII map with player at `pos`
+  - When `reveal_all=False`: unvisited cells show as `###`; exit hidden until in `visited`
+  - When `reveal_all=True`: full map visible (legacy behavior)
+  - Engine tracks `visited` in state and persists as `list[{"row": int, "col": int}]`
+
+### 5.5 CLI command grammar (walking skeleton)
 
 Minimum verbs (CLI now; PyQt will trigger equivalent commands):
 - Movement: `n|s|e|w` or `go <n|s|e|w>`
