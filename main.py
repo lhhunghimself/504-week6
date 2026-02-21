@@ -74,7 +74,15 @@ class GameEngine:
         self._solved_gates = set(game_state.get("solved_gates", []))
         self._started_at = game_state.get("started_at")
         self._pending_gate_id: str | None = None
+        self._pending_db_question: dict[str, str] | None = None
         self._is_complete = status == "completed"
+
+        visited_raw = game_state.get("visited", [])
+        self._visited: set[Position] = (
+            {Position(p["row"], p["col"]) for p in visited_raw} if visited_raw
+            else {self.maze.start}
+        )
+        self._visited.add(self._pos)
 
     def _serialize_state(self) -> dict[str, Any]:
         return {
@@ -83,6 +91,7 @@ class GameEngine:
             "solved_gates": sorted(self._solved_gates),
             "started_at": self._started_at,
             "ended_at": _utc_now_iso() if self._is_complete else None,
+            "visited": [{"row": p.row, "col": p.col} for p in sorted(self._visited, key=lambda p: (p.row, p.col))],
         }
 
     def _persist(self, status: str = "in_progress") -> None:
@@ -105,6 +114,13 @@ class GameEngine:
     def _pending_puzzle_payload(self) -> dict[str, str] | None:
         if self._pending_gate_id is None:
             return None
+        if self._pending_db_question is not None:
+            q = self._pending_db_question
+            return {
+                "puzzle_id": q["id"],
+                "title": "Gate Challenge",
+                "prompt": q["question_text"],
+            }
         puzzle = self.puzzles.get(self._pending_gate_id)
         return {"puzzle_id": puzzle.id, "title": puzzle.title, "prompt": puzzle.prompt}
 
@@ -165,10 +181,18 @@ class GameEngine:
             if self._pending_gate_id is None:
                 return GameOutput(view=self._make_view(), messages=["No pending puzzle."], did_persist=False)
             answer = " ".join(args).strip()
-            puzzle = self.puzzles.get(self._pending_gate_id)
-            if puzzle.check(answer, self._serialize_state()):
+            correct = False
+            if self._pending_db_question is not None:
+                correct = answer.strip().lower() == self._pending_db_question["correct_answer"].strip().lower()
+            else:
+                puzzle = self.puzzles.get(self._pending_gate_id)
+                correct = puzzle.check(answer, self._serialize_state())
+            if correct:
                 self._solved_gates.add(self._pending_gate_id)
+                if self._pending_db_question is not None and hasattr(self.repo, "mark_question_asked"):
+                    self.repo.mark_question_asked(self._pending_db_question["id"])
                 self._pending_gate_id = None
+                self._pending_db_question = None
                 self._persist(status="in_progress")
                 did_persist = True
                 messages.append("Correct.")
@@ -192,6 +216,11 @@ class GameEngine:
         gate_id = self.maze.gate_id_for(self._pos, direction)
         if gate_id is not None and gate_id not in self._solved_gates:
             self._pending_gate_id = gate_id
+            # Try DB question bank first if repo supports it
+            if hasattr(self.repo, "get_random_question"):
+                q = self.repo.get_random_question()
+                if q is not None:
+                    self._pending_db_question = q
             return GameOutput(view=self._make_view(), messages=["Puzzle required."], did_persist=False)
 
         nxt = self.maze.next_pos(self._pos, direction)
@@ -199,6 +228,7 @@ class GameEngine:
             return GameOutput(view=self._make_view(), messages=["Blocked path."], did_persist=False)
 
         self._pos = nxt
+        self._visited.add(self._pos)
         self._move_count += 1
         completed = self._maybe_finish()
         if not completed:
@@ -239,13 +269,22 @@ Commands:
 """
 
 
-def _render_map(maze: Any, pos: Position) -> str:
-    """Render a simple text map of the maze with the player marked."""
+def _render_map(
+    maze: Any,
+    pos: Position,
+    visited: set[Position] | None = None,
+    reveal_all: bool = True,
+) -> str:
+    """Render a text map of the maze with the player marked. Fog of war when reveal_all=False."""
+    vis = visited if visited is not None else set()
     lines: list[str] = []
     for r in range(maze.height):
         row_cells: list[str] = []
         for c in range(maze.width):
             p = Position(row=r, col=c)
+            if not reveal_all and p not in vis:
+                row_cells.append("###")
+                continue
             cell = maze.cell(p)
             if p == pos:
                 icon = " @ "
@@ -265,7 +304,9 @@ def _render_map(maze: Any, pos: Position) -> str:
             connected.append(token)
             if c < len(row_cells) - 1:
                 p = Position(row=r, col=c)
-                if Direction.E in maze.available_moves(p):
+                if not reveal_all and p not in vis:
+                    connected.append("  ")
+                elif Direction.E in maze.available_moves(p):
                     connected.append("--")
                 else:
                     connected.append("  ")
@@ -276,7 +317,9 @@ def _render_map(maze: Any, pos: Position) -> str:
             vert: list[str] = []
             for c in range(maze.width):
                 p = Position(row=r, col=c)
-                if Direction.S in maze.available_moves(p):
+                if not reveal_all and p not in vis:
+                    vert.append("   ")
+                elif Direction.S in maze.available_moves(p):
                     vert.append(" | ")
                 else:
                     vert.append("   ")
@@ -323,7 +366,7 @@ def cli_main() -> None:
     """Interactive CLI entry point for the quiz maze game."""
     from pathlib import Path
 
-    from db import JsonGameRepository
+    from db import open_repo
     from maze import build_minimal_3x3_maze
     from puzzles import PuzzleRegistry
 
@@ -333,8 +376,15 @@ def cli_main() -> None:
     print()
 
     # --- Setup ---
-    save_path = Path("game_save.json")
-    repo = JsonGameRepository(save_path)
+    save_path = Path("game_save.db")
+    repo = open_repo(save_path)
+    if hasattr(repo, "seed_questions"):
+        # Ensure question bank has content (idempotent merge)
+        repo.seed_questions([
+            {"id": "q-len", "question_text": "What built-in returns the number of items in a list?", "correct_answer": "len", "category": "python"},
+            {"id": "q-def", "question_text": "What keyword creates a function in Python?", "correct_answer": "def", "category": "python"},
+            {"id": "q-break", "question_text": "What keyword exits a loop immediately?", "correct_answer": "break", "category": "python"},
+        ])
     maze = build_minimal_3x3_maze()
     puzzles = PuzzleRegistry()
 
@@ -347,6 +397,7 @@ def cli_main() -> None:
         "move_count": 0,
         "solved_gates": [],
         "started_at": _utc_now_iso(),
+        "visited": [{"row": maze.start.row, "col": maze.start.col}],
     }
     game = repo.create_game(
         player_id=player_id,
@@ -409,7 +460,7 @@ def cli_main() -> None:
 
         if verb == "map":
             print()
-            print(_render_map(maze, engine._pos))
+            print(_render_map(maze, engine._pos, visited=engine._visited, reveal_all=False))
             print()
             continue
 
