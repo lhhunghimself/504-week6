@@ -197,28 +197,28 @@ def build_square_maze(size: int, seed: int) -> Maze:
     for pos in grid:
         grid[pos]["blocked"] = {Direction.N, Direction.S, Direction.E, Direction.W}
 
-    # Recursive backtracker: carve passages
-    visited: set[Position] = set()
-
-    def carve(pos: Position) -> None:
-        visited.add(pos)
-        neighbors: list[tuple[Position, Direction]] = []
+    # Iterative backtracker: carve passages (avoids RecursionError on large grids)
+    visited: set[Position] = {start}
+    stack: list[Position] = [start]
+    while stack:
+        pos = stack[-1]
+        unvisited_neighbors: list[tuple[Position, Direction]] = []
         for d in Direction:
             dr, dc = d.delta
             nr, nc = pos.row + dr, pos.col + dc
             if 0 <= nr < height and 0 <= nc < width:
                 npos = Position(nr, nc)
                 if npos not in visited:
-                    neighbors.append((npos, d))
-        rng.shuffle(neighbors)
-        for npos, d in neighbors:
-            if npos not in visited:
-                # Remove wall between pos and npos
-                grid[pos]["blocked"].discard(d)
-                grid[npos]["blocked"].discard(d.opposite)
-                carve(npos)
-
-    carve(start)
+                    unvisited_neighbors.append((npos, d))
+        if unvisited_neighbors:
+            npos, d = rng.choice(unvisited_neighbors)
+            # Remove wall between pos and npos
+            grid[pos]["blocked"].discard(d)
+            grid[npos]["blocked"].discard(d.opposite)
+            visited.add(npos)
+            stack.append(npos)
+        else:
+            stack.pop()
 
     # Mark start and exit
     grid[start]["kind"] = CellKind.START
