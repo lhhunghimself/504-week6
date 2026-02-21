@@ -256,6 +256,17 @@ class SqliteGameRepository:
         url = f"sqlite:///{self.path}"
         self.engine = create_engine(url, connect_args={"check_same_thread": False})
         SQLModel.metadata.create_all(self.engine)
+        self._verify_schema()
+
+    def _verify_schema(self) -> None:
+        """Drop and recreate tables if the existing schema is incompatible."""
+        try:
+            with Session(self.engine) as session:
+                session.exec(select(GameModel).limit(1)).all()
+                session.exec(select(ScoreModel).limit(1)).all()
+        except Exception:
+            SQLModel.metadata.drop_all(self.engine)
+            SQLModel.metadata.create_all(self.engine)
 
     # Player ops
     def get_player(self, player_id: str) -> dict[str, Any] | None:
