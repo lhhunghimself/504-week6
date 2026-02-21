@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import json
+import random
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
+
+from sqlmodel import Field, Session, SQLModel, create_engine, select
 
 
 def _utc_now_iso() -> str:
@@ -200,6 +203,276 @@ Repository = JsonGameRepository
 GameRepository = JsonGameRepository
 
 
-def open_repo(path: str | Path) -> JsonGameRepository:
+# ---------------------------------------------------------------------------
+# SQLModel tables for SqliteGameRepository
+# ---------------------------------------------------------------------------
+
+
+class PlayerModel(SQLModel, table=True):
+    __tablename__ = "players"
+    id: str = Field(primary_key=True)
+    handle: str
+    created_at: str
+
+
+class GameModel(SQLModel, table=True):
+    __tablename__ = "games"
+    id: str = Field(primary_key=True)
+    player_id: str
+    maze_id: str
+    maze_version: str
+    state_json: str = Field(sa_column_kwargs={"name": "state"})
+    status: str
+    created_at: str
+    updated_at: str
+
+
+class ScoreModel(SQLModel, table=True):
+    __tablename__ = "scores"
+    id: str = Field(primary_key=True)
+    player_id: str
+    game_id: str
+    maze_id: str
+    maze_version: str
+    metrics_json: str = Field(sa_column_kwargs={"name": "metrics"})
+    created_at: str
+
+
+class QuestionModel(SQLModel, table=True):
+    __tablename__ = "questions"
+    id: str = Field(primary_key=True)
+    question_text: str
+    correct_answer: str
+    category: str = ""
+    has_been_asked: bool = False
+
+
+class SqliteGameRepository:
+    """SQLite-backed repository using SQLModel. Same interface as JsonGameRepository."""
+
+    def __init__(self, path: str | Path):
+        self.path = Path(path)
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        url = f"sqlite:///{self.path}"
+        self.engine = create_engine(url, connect_args={"check_same_thread": False})
+        SQLModel.metadata.create_all(self.engine)
+
+    def _to_dict(self, obj: Any) -> dict[str, Any]:
+        if isinstance(obj, dict):
+            return obj
+        if hasattr(obj, "model_dump"):
+            return obj.model_dump()
+        return _as_record(obj)
+
+    # Player ops
+    def get_player(self, player_id: str) -> dict[str, Any] | None:
+        with Session(self.engine) as session:
+            row = session.get(PlayerModel, player_id)
+            if row is None:
+                return None
+            return {"id": row.id, "handle": row.handle, "created_at": row.created_at}
+
+    def get_or_create_player(self, handle: str) -> dict[str, Any]:
+        with Session(self.engine) as session:
+            stmt = select(PlayerModel).where(PlayerModel.handle == handle)
+            row = session.exec(stmt).first()
+            if row is not None:
+                return {"id": row.id, "handle": row.handle, "created_at": row.created_at}
+            created = PlayerModel(
+                id=str(uuid4()),
+                handle=handle,
+                created_at=_utc_now_iso(),
+            )
+            session.add(created)
+            session.commit()
+            session.refresh(created)
+            return {"id": created.id, "handle": created.handle, "created_at": created.created_at}
+
+    # Game ops
+    def create_game(
+        self,
+        player_id: str,
+        maze_id: str,
+        maze_version: str,
+        initial_state: dict[str, Any],
+    ) -> dict[str, Any]:
+        now = _utc_now_iso()
+        game_id = str(uuid4())
+        with Session(self.engine) as session:
+            row = GameModel(
+                id=game_id,
+                player_id=player_id,
+                maze_id=maze_id,
+                maze_version=maze_version,
+                state_json=json.dumps(initial_state),
+                status="in_progress",
+                created_at=now,
+                updated_at=now,
+            )
+            session.add(row)
+            session.commit()
+        return {
+            "id": game_id,
+            "player_id": player_id,
+            "maze_id": maze_id,
+            "maze_version": maze_version,
+            "state": initial_state,
+            "status": "in_progress",
+            "created_at": now,
+            "updated_at": now,
+        }
+
+    def get_game(self, game_id: str) -> dict[str, Any] | None:
+        with Session(self.engine) as session:
+            row = session.get(GameModel, game_id)
+            if row is None:
+                return None
+            state = json.loads(row.state_json) if isinstance(row.state_json, str) else row.state_json
+            return {
+                "id": row.id,
+                "player_id": row.player_id,
+                "maze_id": row.maze_id,
+                "maze_version": row.maze_version,
+                "state": state,
+                "status": row.status,
+                "created_at": row.created_at,
+                "updated_at": row.updated_at,
+            }
+
+    def save_game(self, game_id: str, state: dict[str, Any], status: str = "in_progress") -> dict[str, Any]:
+        now = _utc_now_iso()
+        with Session(self.engine) as session:
+            row = session.get(GameModel, game_id)
+            if row is None:
+                raise KeyError(f"Unknown game_id: {game_id}")
+            row.state_json = json.dumps(state)
+            row.status = status
+            row.updated_at = now
+            session.add(row)
+            session.commit()
+            session.refresh(row)
+        return {
+            "id": row.id,
+            "player_id": row.player_id,
+            "maze_id": row.maze_id,
+            "maze_version": row.maze_version,
+            "state": state,
+            "status": status,
+            "created_at": row.created_at,
+            "updated_at": now,
+        }
+
+    # Score ops
+    def record_score(
+        self,
+        player_id: str,
+        game_id: str,
+        maze_id: str,
+        maze_version: str,
+        metrics: dict[str, Any],
+    ) -> dict[str, Any]:
+        now = _utc_now_iso()
+        score_id = str(uuid4())
+        with Session(self.engine) as session:
+            row = ScoreModel(
+                id=score_id,
+                player_id=player_id,
+                game_id=game_id,
+                maze_id=maze_id,
+                maze_version=maze_version,
+                metrics_json=json.dumps(metrics),
+                created_at=now,
+            )
+            session.add(row)
+            session.commit()
+        return {
+            "id": score_id,
+            "player_id": player_id,
+            "game_id": game_id,
+            "maze_id": maze_id,
+            "maze_version": maze_version,
+            "metrics": metrics,
+            "created_at": now,
+        }
+
+    def top_scores(self, maze_id: str | None = None, limit: int = 10) -> list[dict[str, Any]]:
+        with Session(self.engine) as session:
+            stmt = select(ScoreModel)
+            if maze_id is not None:
+                stmt = stmt.where(ScoreModel.maze_id == maze_id)
+            rows = session.exec(stmt).all()
+        items = []
+        for row in rows:
+            metrics = json.loads(row.metrics_json) if isinstance(row.metrics_json, str) else row.metrics_json
+            items.append({
+                "id": row.id,
+                "player_id": row.player_id,
+                "game_id": row.game_id,
+                "maze_id": row.maze_id,
+                "maze_version": row.maze_version,
+                "metrics": metrics,
+                "created_at": row.created_at,
+            })
+        items.sort(key=lambda s: (
+            s["metrics"].get("elapsed_seconds", float("inf")),
+            s["metrics"].get("moves", float("inf")),
+        ))
+        return items[:limit]
+
+    # Question Bank ops
+    def get_random_question(self, category: str | None = None) -> dict[str, Any] | None:
+        with Session(self.engine) as session:
+            stmt = select(QuestionModel).where(QuestionModel.has_been_asked == False)
+            if category is not None:
+                stmt = stmt.where(QuestionModel.category == category)
+            rows = list(session.exec(stmt).all())
+        if not rows:
+            return None
+        row = random.choice(rows)
+        return {
+            "id": row.id,
+            "question_text": row.question_text,
+            "correct_answer": row.correct_answer,
+            "category": row.category,
+        }
+
+    def mark_question_asked(self, question_id: str) -> None:
+        with Session(self.engine) as session:
+            row = session.get(QuestionModel, question_id)
+            if row is not None:
+                row.has_been_asked = True
+                session.add(row)
+                session.commit()
+
+    def seed_questions(self, questions: list[dict[str, Any]]) -> None:
+        with Session(self.engine) as session:
+            for q in questions:
+                row = QuestionModel(
+                    id=q.get("id", str(uuid4())),
+                    question_text=q["question_text"],
+                    correct_answer=q["correct_answer"],
+                    category=q.get("category", ""),
+                    has_been_asked=False,
+                )
+                session.merge(row)
+            session.commit()
+
+    def reset_questions(self) -> None:
+        with Session(self.engine) as session:
+            rows = session.exec(select(QuestionModel)).all()
+            for row in rows:
+                row.has_been_asked = False
+                session.add(row)
+            session.commit()
+
+    def close(self) -> None:
+        self.engine.dispose()
+
+
+def open_repo(path: str | Path):
+    """Return SqliteGameRepository for .db paths, JsonGameRepository otherwise."""
+    path = Path(path)
+    if path.suffix == ".db":
+        return SqliteGameRepository(path)
     return JsonGameRepository(path)
 
